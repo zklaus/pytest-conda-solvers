@@ -3,5 +3,6 @@ dependencies:
   - conda
   - hatchling
   - myst-parser
+  - pre-commit
   - pytest >=6.2.0
   - sphinx
