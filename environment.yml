@@ -2,6 +2,6 @@ name: pytest-conda-solvers
 dependencies:
   - conda
   - hatchling
+  - myst-parser
   - pytest >=6.2.0
   - sphinx
-  - myst-parser
