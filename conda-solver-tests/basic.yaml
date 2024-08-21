@@ -1,0 +1,6 @@
+name: new install
+input:
+  prefix: []
+  cache: []
+  requests:
+    - python
