@@ -6,45 +6,45 @@ requires = [
 ]
 
 [project]
-name = "pytest-conda-solvers"
-description = "A pytest plugin to run conda solver tests"
-dynamic = ["version"]
-readme = "README.md"
-requires-python = ">=3.8"
 authors = [
-    { name = "conda contributors" },
+  {name = "conda contributors"},
 ]
-maintainers = [
-    { name = "conda contributors" },
-]
-license = {file = "LICENSE"}
 classifiers = [
-    "Framework :: Pytest",
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Topic :: Software Development :: Testing",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
-    "License :: OSI Approved :: BSD License",
+  "Framework :: Pytest",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Testing",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "License :: OSI Approved :: BSD License",
 ]
 dependencies = [
-    "conda",
-    "pytest>=6.2.0",
+  "conda",
+  "pytest>=6.2.0",
 ]
-
-[project.urls]
-Repository = "https://github.com/zklaus/pytest-conda-solvers"
+description = "A pytest plugin to run conda solver tests"
+dynamic = ["version"]
+license = {file = "LICENSE"}
+maintainers = [
+  {name = "conda contributors"},
+]
+name = "pytest-conda-solvers"
+readme = "README.md"
+requires-python = ">=3.8"
 
 [project.entry-points.pytest11]
 conda-solvers = "pytest_conda_solvers.plugin"
+
+[project.urls]
+Repository = "https://github.com/zklaus/pytest-conda-solvers"
 
 [tool.hatch.build]
 include = ["pytest_conda_solvers"]
