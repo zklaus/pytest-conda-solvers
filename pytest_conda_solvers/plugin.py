@@ -11,20 +11,17 @@ class YamlFile(pytest.File):
     def collect(self):
         yaml = YAML(typ="safe")
         raw = yaml.load(self.path.open(encoding="utf-8"))
-        for name, spec in sorted(raw.items()):
-            yield YamlItem.from_parent(self, name=name, spec=spec)
+        for item in raw["tests"]:
+            name = item.pop("name")
+            yield YamlItem.from_parent(self, name=name, **item)
 
 
 class YamlItem(pytest.Item):
-    def __init__(self, *, spec, **kwargs):
+    def __init__(self, *, id, input, **kwargs):
         super().__init__(**kwargs)
-        self.spec = spec
 
     def runtest(self):
-        for name, value in sorted(self.spec.items()):
-            # Some custom test execution (dumb example follows).
-            if name != value:
-                raise YamlException(self, name, value)
+        pass
 
     def repr_failure(self, excinfo):
         """Called when self.runtest() raises an exception."""
