@@ -12,8 +12,7 @@ class YamlFile(pytest.File):
         yaml = YAML(typ="safe")
         raw = yaml.load(self.path.open(encoding="utf-8"))
         for item in raw["tests"]:
-            name = item.pop("name")
-            yield YamlItem.from_parent(self, name=name, **item)
+            yield YamlItem.from_parent(self, **item)
 
 
 class YamlItem(pytest.Item):
