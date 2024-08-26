@@ -11,18 +11,37 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        # https://github.com/conda-incubator/setup-miniconda#use-a-default-shell
+        shell: bash -el {0}  # bash exit immediately on error + login shell
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', pypy-3.8]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        default-channel: [defaults, conda-forge]
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
+      - name: Checkout Source
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
-          python-version: ${{ matrix.python-version }}
+          fetch-depth: 0
+
+      - name: Hash + Timestamp
+        run: echo "HASH=${{ runner.os }}-${{ runner.arch }}-Py${{ matrix.python-version }}-${{ matrix.default-channel }}-$(date -u "+%Y%m")" >> $GITHUB_ENV
+
+      - name: Cache Conda
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9
+        with:
+          path: ~/conda_pkgs_dir
+          key: cache-${{ env.HASH }}
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@a4260408e20b96e80095f42ff7f1a15b27dd94ca
+        with:
+          condarc-file: .github/condarc-${{ matrix.default-channel }}
+          run-post: false  # skip post cleanup
 
       - name: Install tox
-        run: pip install tox
+        run: pip install tox tox-conda
 
       - name: Test
         run: tox -e py
