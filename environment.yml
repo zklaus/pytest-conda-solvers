@@ -6,4 +6,3 @@ dependencies:
   - pre-commit
   - pytest >=6.2.0
   - sphinx
-  - zstandard

@@ -3,18 +3,13 @@ import os
 
 from importlib.resources import files
 
-import zstandard
-
 from conda.models.channel import Channel
 from conda.core.subdir_data import SubdirData
 
 
 def load_data_file(filename):
-    compressed_file = files().joinpath(f"{filename}.zst")
-    dctx = zstandard.ZstdDecompressor()
-    with open(compressed_file, "rb") as ifh:
-        with dctx.stream_reader(ifh) as dfh:
-            data = json.load(dfh)
+    with open(files().joinpath(filename)) as ifh:
+        data = json.load(ifh)
     return data
 
 
