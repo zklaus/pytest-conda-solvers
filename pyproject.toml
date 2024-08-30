@@ -46,6 +46,18 @@ conda-solvers = "pytest_conda_solvers.plugin"
 [project.urls]
 Repository = "https://github.com/zklaus/pytest-conda-solvers"
 
+[tool.coverage.report]
+exclude_lines = [
+  "if TYPE_CHECKING:",  # ignoring type checking imports
+]
+show_missing = true
+skip_covered = true
+sort = "Miss"
+
+[tool.coverage.run]
+# store relative paths in coverage information
+relative_files = true
+
 [tool.hatch.build]
 include = ["pytest_conda_solvers"]
 
@@ -57,3 +69,28 @@ source = "vcs"
 
 [tool.hatch.version.raw-options]
 local_scheme = "dirty-tag"
+
+[tool.pytest.ini_options]
+addopts = [
+  "--color=yes",
+  "--cov-append",
+  "--cov-branch",
+  "--cov-report=term",  # print summary table to screen
+  "--cov-report=xml",  # for codecov/codecov-action upload
+  "--durations=16",
+  "--junitxml=test-report.xml",
+  "--store-durations",
+  "--strict-markers",
+  "--tb=native",
+  "--xdoctest-modules",
+  "--xdoctest-style=google",
+  "-vv",
+]
+doctest_optionflags = [
+  "NORMALIZE_WHITESPACE",
+  "IGNORE_EXCEPTION_DETAIL",
+  "ALLOW_UNICODE",
+  "ELLIPSIS",
+]
+minversion = 3.0
+testpaths = ["tests"]
