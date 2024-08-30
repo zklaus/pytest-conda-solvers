@@ -51,7 +51,7 @@ jobs:
         run: >
           conda install
           --yes
-          --file environment.yml
+          --file tests/requirements.txt
           python=${{ matrix.python-version }}
 
       - name: Conda Info
