@@ -1,2 +1,2 @@
-- conda
-- pytest >=6.2.0
+conda
+pytest >=6.2.0
