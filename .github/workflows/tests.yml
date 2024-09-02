@@ -64,9 +64,12 @@ jobs:
       - name: Conda List
         run: conda list --show-channel-urls
 
+      - name: Local install
+        run: pip install -e .
+
       - name: Run Tests
         run: >
-          python -m pytest
+          pytest
           --cov=pytest_conda_solvers
           --durations-path=tools/durations/${{ runner.os }}.json
 
