@@ -22,7 +22,7 @@ jobs:
         shell: bash -el {0}  # bash exit immediately on error + login shell
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         default-channel: [defaults, conda-forge]
     env:
       CONDA_TEST_SOLVERS: libmamba,classic

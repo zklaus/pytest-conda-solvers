@@ -1,10 +1,14 @@
 import json
 import os
-
-from importlib.resources import files
+import sys
 
 from conda.models.channel import Channel
 from conda.core.subdir_data import SubdirData
+
+if sys.version_info < (3, 12):
+    from importlib_resources import files
+else:
+    from importlib.resources import files
 
 
 def load_data_file(filename):
