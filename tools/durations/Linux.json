@@ -1,0 +1,6 @@
+{
+    "tests/test_conda_solvers.py::test_bar_fixture": 0.1141086689895019,
+    "tests/test_conda_solvers.py::test_hello_ini_setting": 0.11854370500077493,
+    "tests/test_conda_solvers.py::test_help_message": 0.1019782520015724,
+    "tests/test_data.py::test_load_data_file": 0.027046779985539615
+}
