@@ -29,7 +29,7 @@ classifiers = [
 dependencies = [
   "conda",
   "pytest>=6.2.0",
-  "importlib_resources>=5.10; python_version<3.12",
+  "importlib_resources>=5.10; python_version<'3.12'",
 ]
 description = "A pytest plugin to run conda solver tests"
 dynamic = ["version"]
