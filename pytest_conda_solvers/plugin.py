@@ -1,26 +1,41 @@
+from tempfile import TemporaryDirectory
+
 import pytest
 from ruamel.yaml import YAML
+
+from .helpers import SimpleEnvironment
 
 
 def pytest_collect_file(parent, file_path):
     if file_path.suffix == ".yaml":
-        return YamlFile.from_parent(parent, path=file_path)
+        return CondaSolverTestFile.from_parent(parent, path=file_path)
 
 
-class YamlFile(pytest.File):
+@pytest.fixture()
+def env():
+    solver_class = None
+    with TemporaryDirectory(prefix="conda-test-repo-") as tmpdir:
+        myenv = SimpleEnvironment(tmpdir, solver_class)
+        yield myenv
+
+
+class CondaSolverTestFile(pytest.File):
     def collect(self):
         yaml = YAML(typ="safe")
         raw = yaml.load(self.path.open(encoding="utf-8"))
         for item in raw["tests"]:
-            yield YamlItem.from_parent(self, **item)
+            yield CondaSolverTestItem.from_parent(self, **item)
 
 
-class YamlItem(pytest.Item):
-    def __init__(self, *, id, input, **kwargs):
-        super().__init__(**kwargs)
+class CondaSolverTestItem(pytest.Item):
+    def setup(self) -> None:
+        print("Hello, world!")
 
     def runtest(self):
         pass
+
+    def teardown(self) -> None:
+        return super().teardown()
 
     def repr_failure(self, excinfo):
         """Called when self.runtest() raises an exception."""
