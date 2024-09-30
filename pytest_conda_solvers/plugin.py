@@ -1,8 +1,8 @@
 from importlib import util
-from typing import Iterable, Union, Any
+from typing import Any, Iterable, Union
 
 import pytest
-from pytest import Item, Collector
+from pytest import Collector, Config, Item, Metafunc
 from ruamel.yaml import YAML
 
 # import fixtures here to actually make them available
@@ -12,9 +12,21 @@ from .fixtures import (  # noqa: F401
 )
 
 
+def pytest_configure(config: Config) -> None:
+    config.addinivalue_line(
+        "markers", "conda_solver_test: marks the test for parametrization"
+    )
+
+
 def pytest_collect_file(parent, file_path):
     if file_path.suffix == ".yaml":
         return CondaSolverYamlFile.from_parent(parent, path=file_path)
+
+
+def pytest_generate_tests(metafunc: Metafunc) -> None:
+    cst = metafunc.definition.get_closest_marker("conda_solver_test")
+    if cst:
+        raise RuntimeError(f"{metafunc}")
 
 
 class CondaSolverYamlFile(pytest.File):
@@ -61,21 +73,21 @@ class CondaSolverTestFile(pytest.Module):
 
         name = "test-label"
 
-        yield CondaSolverTestFunction.from_parent(
+        yield CondaSolverTestClass.from_parent(
             self,
             name=name,
-            function_name="test_empty",
+            class_name="TestBasic",
         )
 
 
-class CondaSolverTestFunction(pytest.Function):
+class CondaSolverTestClass(pytest.Class):
     def __init__(
-        self, parent: CondaSolverTestFile, name: str, function_name: str, **kw: Any
+        self, parent: CondaSolverTestFile, name: str, class_name: str, **kw: Any
     ):
+        super().__init__(name, parent=parent)
         self.params: Any = kw
         self.name: str = name
-        self.function_name: str = function_name
-        super().__init__(name, parent=parent)
+        self.class_name: str = class_name
 
     def _getobj(self) -> Any:
         """
@@ -87,16 +99,4 @@ class CondaSolverTestFunction(pytest.Function):
         # cf. https://github.com/pytest-dev/pytest/blob/master/src/_pytest/python.py
         assert self.parent is not None
         obj = self.parent.obj  # type: ignore[attr-defined]
-        return getattr(obj, self.function_name)
-
-    @classmethod
-    def from_parent(  # type: ignore[override]
-        cls, parent, *, name: str, obj: Any = None, **kw: Any
-    ) -> Any:
-        """The public constructor."""
-        # mypy throws an error because the parent class (pytest.Class) does not accept
-        # additional **kw.
-        # This has been fixed in: https://github.com/pytest-dev/pytest/pull/8367
-        # and will be part of a future pytest release. Until then, mypy is instructed
-        # to ignore this error
-        return cls._create(parent=parent, name=name, obj=obj, **kw)
+        return getattr(obj, self.class_name)
