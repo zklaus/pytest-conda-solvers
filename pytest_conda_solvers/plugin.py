@@ -2,7 +2,7 @@ from importlib import util
 from typing import Any, Iterable, Union
 
 import pytest
-from pytest import Collector, Config, Item, Metafunc
+from pytest import Collector, Config, Item, Metafunc, Session
 from ruamel.yaml import YAML
 
 # import fixtures here to actually make them available
@@ -26,7 +26,20 @@ def pytest_collect_file(parent, file_path):
 def pytest_generate_tests(metafunc: Metafunc) -> None:
     cst = metafunc.definition.get_closest_marker("conda_solver_test")
     if cst:
-        raise RuntimeError(f"{metafunc}")
+        te = metafunc.definition.parent.parent.test_entry
+        ids = (te["name"].replace(" ", "_"),)
+        metafunc.parametrize("test", ids, ids=ids)
+
+
+def pytest_collection_modifyitems(
+    session: Session, config: Config, items: list[Item]
+) -> None:
+    for item in items:
+        cst = item.get_closest_marker("conda_solver_test")
+        if cst:
+            original_id = item._nodeid
+            base_id, detail_id = original_id.rsplit("::", 1)
+            item._nodeid = base_id
 
 
 class CondaSolverYamlFile(pytest.File):
@@ -43,6 +56,7 @@ class CondaSolverYamlFile(pytest.File):
                 path=self.path,
                 obj=module,
                 test_entry=item,
+                name=f"{item['name']}-file",
             )
 
 
@@ -71,7 +85,7 @@ class CondaSolverTestFile(pytest.Module):
         self._register_setup_function_fixture()
         self.session._fixturemanager.parsefactories(self)
 
-        name = "test-label"
+        name = self.test_entry["name"].replace(" ", "_")
 
         yield CondaSolverTestClass.from_parent(
             self,
