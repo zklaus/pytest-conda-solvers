@@ -6,3 +6,17 @@ tests:
       cache: []
       requests:
         - python
+  - name: new install 2
+    id: B002
+    input:
+      prefix: []
+      cache: []
+      requests:
+        - python
+  - name: new install 3
+    id: B003
+    input:
+      prefix: []
+      cache: []
+      requests:
+        - python
