@@ -17896,7 +17896,7 @@
     ],
     "version": "0.13"
   },
-    "scikit-learn-0.13-np17py27_1.tar.bz2": {
+  "scikit-learn-0.13-np17py27_1.tar.bz2": {
     "build": "np17py27_1",
     "build_number": 1,
     "depends": [
@@ -20966,7 +20966,7 @@
     ],
     "version": "4.0.5"
   },
-    "zope.interface-4.1.1.1-py33_0.tar.bz2": {
+  "zope.interface-4.1.1.1-py33_0.tar.bz2": {
     "build": "py33_0",
     "build_number": 0,
     "depends": [
@@ -21046,7 +21046,7 @@
     "build": "0",
     "build_number": 0,
     "depends": [
-        "scikit-learn ==0.13"
+      "scikit-learn ==0.13"
     ],
     "md5": "28a63f84034658e80779e88e70fad7bf",
     "name": "unsatisfiable-with-py26",
@@ -21054,37 +21054,37 @@
     "version": "1.0"
   },
   "anaconda-custom-0.tar.bz2": {
-      "build": "0",
-      "build_number": 0,
-      "depends": [
-          "_dummy_anaconda_impl"
-      ],
-      "md5": "28a63f84034658e80779e88e70fad7bf",
-      "name": "dummy-anaconda",
-      "pub_date": "2013-01-14",
-      "version": "custom"
+    "build": "0",
+    "build_number": 0,
+    "depends": [
+      "_dummy_anaconda_impl"
+    ],
+    "md5": "28a63f84034658e80779e88e70fad7bf",
+    "name": "dummy-anaconda",
+    "pub_date": "2013-01-14",
+    "version": "custom"
   },
   "_dummy_anaconda_impl-1.0-0.tar.bz2": {
-      "build": "0",
-      "build_number": 0,
-      "depends": [
-          "zeromq",
-          "bzip2"
-      ],
-      "md5": "28a63f84034658e80779e88e70fad7bf",
-      "name": "_dummy_anaconda_impl-1.0-0.tar.bz2",
-      "pub_date": "2013-01-14",
-      "version": "1.0"
+    "build": "0",
+    "build_number": 0,
+    "depends": [
+      "zeromq",
+      "bzip2"
+    ],
+    "md5": "28a63f84034658e80779e88e70fad7bf",
+    "name": "_dummy_anaconda_impl-1.0-0.tar.bz2",
+    "pub_date": "2013-01-14",
+    "version": "1.0"
   },
   "_dummy_anaconda_impl-2.0-0.tar.bz2": {
-      "build": "0",
-      "build_number": 0,
-      "depends": [
-          "zeromq"
-      ],
-      "md5": "28a63f84034658e80779e88e70fad7bf",
-      "name": "_dummy_anaconda_impl-1.0-0.tar.bz2",
-      "pub_date": "2013-01-14",
-      "version": "2.0"
+    "build": "0",
+    "build_number": 0,
+    "depends": [
+      "zeromq"
+    ],
+    "md5": "28a63f84034658e80779e88e70fad7bf",
+    "name": "_dummy_anaconda_impl-1.0-0.tar.bz2",
+    "pub_date": "2013-01-14",
+    "version": "2.0"
   }
 }

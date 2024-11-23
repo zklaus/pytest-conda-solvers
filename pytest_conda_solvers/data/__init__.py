@@ -11,6 +11,11 @@ else:
     from importlib.resources import files
 
 
+# This package contains datafiles converted from the original index*.json files with
+# jq '.|to_entries|map(select((.value.subdir=="noarch" or (.value | has("noarch")))))|from_entries' index4.json >channel-4_noarch.json
+# jq '.|to_entries|map(select((.value.subdir=="noarch" or (.value | has("noarch")))|not))|from_entries' index4.json >channel-4_non-noarch.json
+
+
 def load_data_file(filename):
     with open(files().joinpath(filename)) as ifh:
         data = json.load(ifh)
