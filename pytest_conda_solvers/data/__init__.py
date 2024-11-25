@@ -1,3 +1,4 @@
+from functools import lru_cache
 import json
 import os
 import sys
@@ -20,6 +21,25 @@ def load_data_file(filename):
     with open(files().joinpath(filename)) as ifh:
         data = json.load(ifh)
     return data
+
+
+SUBDIR_MAP = {
+    "linux-64": {"arch": "x86_64", "platform": "linux"},
+}
+
+
+@lru_cache(maxsize=None)
+def get_channel_repodata(channel_name, subdir, filename):
+    # This currently offers neither the add_pip nor the merge_noarch options
+    assert filename in ("repodata.json", "current_repodata.json")
+    info = {"subdir": subdir} | SUBDIR_MAP[subdir]
+    source = "noarch" if subdir == "noarch" else "non-noarch"
+    packages = load_data_file(f"{channel_name}_{source}.json")
+    repodata = {
+        "info": info,
+        "packages": packages,
+    }
+    return repodata
 
 
 def _get_index_r_base(

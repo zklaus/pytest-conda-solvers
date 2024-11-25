@@ -2,6 +2,8 @@ import pytest
 
 from .helpers import SimpleEnvironment
 
+pytest_plugins = "pytest_conda_solvers.server"
+
 
 @pytest.fixture
 def solver():
