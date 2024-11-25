@@ -5,11 +5,8 @@ import pytest
 from pytest import Collector, Config, Item, Metafunc, Session
 from ruamel.yaml import YAML
 
-# import fixtures here to actually make them available
-from .fixtures import (  # noqa: F401
-    env,
-    index_packages,
-)
+
+pytest_plugins = "pytest_conda_solvers.fixtures"
 
 
 def pytest_configure(config: Config) -> None:
