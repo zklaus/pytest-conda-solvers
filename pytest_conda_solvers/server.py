@@ -1,7 +1,7 @@
 from enum import Enum
 import threading
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from pytest import fixture
 import uvicorn
 
@@ -33,6 +33,10 @@ def channel_server(host="localhost", port=8080):
         filename: RepodataFilename,
     ):
         return get_channel_repodata(channel_name, subdir, filename.value)
+
+    @app.get("/{full_path:path}")
+    async def catch_all():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     thread = threading.Thread(
         target=uvicorn.run,
