@@ -21,22 +21,35 @@ def pytest_collect_file(parent, file_path):
 
 
 def pytest_generate_tests(metafunc: Metafunc) -> None:
-    cst = metafunc.definition.get_closest_marker("conda_solver_test")
-    if cst:
-        te = metafunc.definition.parent.parent.test_entry
-        ids = (te["name"].replace(" ", "_"),)
-        metafunc.parametrize("test", ids, ids=ids)
+    is_conda_solver_test = metafunc.definition.get_closest_marker("conda_solver_test")
+    if is_conda_solver_test:
+        test_entry = metafunc.definition.parent.parent.test_entry
+        if f"test_{test_entry['kind']}" == metafunc.definition.name:
+            ids = (test_entry["name"].replace(" ", "_"),)
+            metafunc.parametrize("test", ids, ids=ids)
 
 
 def pytest_collection_modifyitems(
     session: Session, config: Config, items: list[Item]
 ) -> None:
-    for item in items:
-        cst = item.get_closest_marker("conda_solver_test")
+    remaining = []
+    deselected = []
+    for colitem in items:
+        cst = colitem.get_closest_marker("conda_solver_test")
         if cst:
-            original_id = item._nodeid
-            base_id, detail_id = original_id.rsplit("::", 1)
-            item._nodeid = base_id
+            if colitem.name == colitem.originalname:
+                deselected.append(colitem)
+            else:
+                remaining.append(colitem)
+                # original_id = item._nodeid
+                # base_id, detail_id = original_id.rsplit("::", 1)
+                # item._nodeid = base_id  # .replace(".yaml", ".py")
+        else:
+            remaining.append(colitem)
+
+    if deselected:
+        config.hook.pytest_deselected(items=deselected)
+        items[:] = remaining
 
 
 class CondaSolverYamlFile(pytest.File):

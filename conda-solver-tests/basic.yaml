@@ -1,6 +1,7 @@
 tests:
   - name: new install
     id: B001
+    kind: empty
     input:
       prefix: []
       cache: []
@@ -8,6 +9,7 @@ tests:
         - python
   - name: new install 2
     id: B002
+    kind: solve
     input:
       prefix: []
       cache: []
@@ -15,6 +17,7 @@ tests:
         - python
   - name: new install 3
     id: B003
+    kind: solve
     input:
       prefix: []
       cache: []
