@@ -2,11 +2,23 @@ from importlib import util
 from typing import Any, Iterable, Union
 
 import pytest
-from pytest import Collector, Config, Item, Metafunc, Session
+from pytest import (
+    Collector,
+    Config,
+    Item,
+    Metafunc,
+    Parser,
+    PytestPluginManager,
+    Session,
+)
 from ruamel.yaml import YAML
 
-
 pytest_plugins = "pytest_conda_solvers.fixtures"
+
+
+def pytest_addoption(parser: Parser, pluginmanager: PytestPluginManager) -> None:
+    group = parser.getgroup("conda_solver")
+    group.addoption("--conda-solver", default="libmamba")
 
 
 def pytest_configure(config: Config) -> None:
