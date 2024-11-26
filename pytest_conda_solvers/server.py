@@ -1,9 +1,11 @@
-from enum import Enum
+import json
 import threading
+from enum import Enum
+from functools import lru_cache
 
-from fastapi import FastAPI, HTTPException, status
-from pytest import fixture
 import uvicorn
+from fastapi import FastAPI, HTTPException, Response, status
+from pytest import fixture
 
 from .data import get_channel_repodata
 
@@ -22,6 +24,11 @@ class ChannelServer:
         return f"http://{self.host}:{self.port}/{channel}/{subdir}"
 
 
+@lru_cache(maxsize=None)
+def _get_encoded_channel_repodata(channel_name, subdir, filename):
+    return json.dumps(get_channel_repodata(channel_name, subdir, filename))
+
+
 @fixture(scope="session")
 def channel_server(host="localhost", port=8080):
     app = FastAPI()
@@ -32,7 +39,10 @@ def channel_server(host="localhost", port=8080):
         subdir: str,
         filename: RepodataFilename,
     ):
-        return get_channel_repodata(channel_name, subdir, filename.value)
+        return Response(
+            _get_encoded_channel_repodata(channel_name, subdir, filename.value),
+            media_type="application/json",
+        )
 
     @app.get("/{full_path:path}")
     async def catch_all():
