@@ -20,8 +20,8 @@ class ChannelServer:
         self.host = host
         self.port = port
 
-    def get_channel_url(self, channel, subdir):
-        return f"http://{self.host}:{self.port}/{channel}/{subdir}"
+    def get_channel_url(self, channel):
+        return f"http://{self.host}:{self.port}/{channel}"
 
 
 @lru_cache(maxsize=None)
