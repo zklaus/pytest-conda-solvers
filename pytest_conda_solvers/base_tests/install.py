@@ -1,13 +1,14 @@
 from contextlib import contextmanager
+from unittest.mock import patch
 
 import pytest
-
 from boltons.setutils import IndexedSet
-
 from conda.base.context import conda_tests_ctxt_mgmt_def_pol
 from conda.common.io import env_var
+from conda.core.prefix_data import PrefixData
+from conda.history import History
 from conda.models.channel import Channel
-from conda.models.records import PackageRecord
+from conda.models.records import PackageRecord, PrefixRecord
 from conda.resolve import MatchSpec
 
 from ..server import ChannelServer
@@ -15,13 +16,28 @@ from ..server import ChannelServer
 
 @contextmanager
 def get_solver(
-    solver_backend, tmpdir, channel_server, channel_names, subdirs, specs_to_add
+    solver_backend,
+    tmpdir,
+    channel_server,
+    channel_names,
+    subdirs,
+    specs_to_add=(),
+    specs_to_remove=(),
+    prefix_records=(),
+    history_specs=(),
 ):
     channels = [
         Channel(channel_server.get_channel_url(channel_name))
         for channel_name in channel_names
     ]
+    tmpdir = tmpdir.strpath
+    pd = PrefixData(tmpdir)
+    pd._PrefixData__prefix_records = {
+        rec.name: PrefixRecord.from_objects(rec) for rec in prefix_records
+    }
+    spec_map = {spec.name: spec for spec in history_specs}
     with (
+        patch.object(History, "get_requested_specs_map", return_value=spec_map),
         env_var(
             "CONDA_ADD_PIP_AS_PYTHON_DEPENDENCY",
             str(False).lower(),
@@ -70,7 +86,11 @@ class TestBasic:
 
         specs_to_add = (MatchSpec("python=2"),)
         with get_solver(
+            solver_backend,
             tmpdir,
+            channel_server,
+            ["channel-1"],
+            ["linux-64"],
             specs_to_add=specs_to_add,
             prefix_records=final_state,
             history_specs=specs,
