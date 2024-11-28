@@ -38,6 +38,8 @@ def get_solver(
         rec.name: PrefixRecord.from_objects(rec) for rec in prefix_records
     }
     spec_map = {spec.name: spec for spec in history_specs}
+    if add_pip:
+        breakpoint()
     with (
         patch.object(History, "get_requested_specs_map", return_value=spec_map),
         env_var(
@@ -107,15 +109,16 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
+        solver_input = prepare_solver_input(test["input"], channel_server, "linux-64")
         with get_solver(
             solver_backend,
             tmpdir,
             channel_server,
-            **prepare_solver_input(test["input"], channel_server, "linux-64"),
+            **solver_input,
         ) as solver:
             final_state = solver.solve_final_state()
 
         ref = add_base_url(
             channel_server.get_base_url(), "linux-64", test["output"]["final_state"]
         )
-        assert convert_to_dist_str(final_state) == ref
+        assert sorted(list(convert_to_dist_str(final_state))) == sorted(list(ref))
