@@ -38,7 +38,7 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
         test_entry = metafunc.definition.parent.parent.test_entry
         if f"test_{test_entry['kind']}" == metafunc.definition.name:
             ids = (test_entry["name"].replace(" ", "_"),)
-            metafunc.parametrize("test", ids, ids=ids)
+            metafunc.parametrize("test", (test_entry,), ids=ids)
 
 
 def pytest_collection_modifyitems(
