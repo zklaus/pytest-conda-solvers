@@ -1,25 +1,20 @@
 tests:
-  - name: new install
+  - name: solve_1
     id: B001
-    kind: empty
-    input:
-      prefix: []
-      cache: []
-      requests:
-        - python
-  - name: new install 2
-    id: B002
     kind: solve
     input:
-      prefix: []
-      cache: []
-      requests:
-        - python
-  - name: new install 3
-    id: B003
-    kind: solve
-    input:
-      prefix: []
-      cache: []
-      requests:
-        - python
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: numpy
+      prefix:
+      cache:
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_0
