@@ -20,8 +20,11 @@ class ChannelServer:
         self.host = host
         self.port = port
 
+    def get_base_url(self):
+        return f"http://{self.host}:{self.port}"
+
     def get_channel_url(self, channel):
-        return f"http://{self.host}:{self.port}/{channel}"
+        return f"{self.get_base_url()}/{channel}"
 
 
 @lru_cache(maxsize=None)
