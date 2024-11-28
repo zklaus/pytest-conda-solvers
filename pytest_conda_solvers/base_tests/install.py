@@ -26,6 +26,7 @@ def get_solver(
     specs_to_remove=(),
     prefix_records=(),
     history_specs=(),
+    add_pip=False,
 ):
     channels = [
         Channel(channel_server.get_channel_url(channel_name))
@@ -41,7 +42,7 @@ def get_solver(
         patch.object(History, "get_requested_specs_map", return_value=spec_map),
         env_var(
             "CONDA_ADD_PIP_AS_PYTHON_DEPENDENCY",
-            str(False).lower(),
+            str(add_pip).lower(),
             stack_callback=conda_tests_ctxt_mgmt_def_pol,
         ),
     ):
@@ -93,6 +94,7 @@ def prepare_solver_input(raw_solver_input, channel_server, arch):
         solver_input[spec_key] = tuple(
             MatchSpec(s) for s in ensure_tuple(raw_solver_input[spec_key])
         )
+    solver_input["add_pip"] = raw_solver_input.get("add_pip", False)
     return solver_input
 
 
