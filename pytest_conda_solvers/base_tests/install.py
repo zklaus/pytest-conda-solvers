@@ -1,3 +1,4 @@
+import re
 from contextlib import contextmanager
 from unittest.mock import patch
 
@@ -9,6 +10,7 @@ from conda.core.prefix_data import PrefixData
 from conda.history import History
 from conda.models.channel import Channel
 from conda.models.records import PackageRecord, PrefixRecord
+from conda.resolve import MatchSpec
 
 from ..server import ChannelServer
 
@@ -50,18 +52,48 @@ def convert_to_dist_str(state: IndexedSet[PackageRecord]) -> IndexedSet[str]:
     return IndexedSet(prec.dist_str() for prec in state)
 
 
-def ensure_list(entry):
+def ensure_tuple(entry):
+    if entry is None:
+        return ()
     if isinstance(entry, str):
-        return [entry]
+        return (entry,)
     if isinstance(entry, list):
-        return [str(e) for e in entry]
-    return [str(entry)]
+        return tuple(str(e) for e in entry)
+    return (str(entry),)
 
 
 def add_base_url(base_url, arch, dist_strs):
     return type(dist_strs)(
         f"{base_url}/{dist_str.replace('${{ arch }}', arch)}" for dist_str in dist_strs
     )
+
+
+def package_record_from_dist_str(dist_str):
+    DIST_STR_RE = re.compile(
+        "(?P<channel>.*)/(?P<subdir>.*)::(?P<name>.*)-(?P<version>.*)-(?P<build>.*?_?(?P<build_number>[0-9]+))"
+    )
+    spec = DIST_STR_RE.fullmatch(dist_str).groupdict()
+    spec["build_number"] = int(spec["build_number"])
+    return PackageRecord.from_objects(**spec)
+
+
+def prepare_solver_input(raw_solver_input, channel_server, arch):
+    solver_input = {}
+    for simple_key in ("channels", "subdirs"):
+        solver_input[simple_key] = ensure_tuple(raw_solver_input[simple_key])
+    solver_input["prefix_records"] = tuple(
+        package_record_from_dist_str(dist_str)
+        for dist_str in add_base_url(
+            channel_server.get_base_url(),
+            arch,
+            ensure_tuple(raw_solver_input["prefix"]),
+        )
+    )
+    for spec_key in ("specs_to_add", "history_specs"):
+        solver_input[spec_key] = tuple(
+            MatchSpec(s) for s in ensure_tuple(raw_solver_input[spec_key])
+        )
+    return solver_input
 
 
 class TestBasic:
@@ -73,14 +105,11 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
-        input = test["input"]
         with get_solver(
             solver_backend,
             tmpdir,
             channel_server,
-            channels=ensure_list(input["channels"]),
-            subdirs=ensure_list(input["subdirs"]),
-            specs_to_add=ensure_list(input["specs_to_add"]),
+            **prepare_solver_input(test["input"], channel_server, "linux-64"),
         ) as solver:
             final_state = solver.solve_final_state()
 
@@ -88,28 +117,3 @@ class TestBasic:
             channel_server.get_base_url(), "linux-64", test["output"]["final_state"]
         )
         assert convert_to_dist_str(final_state) == ref
-
-        # specs_to_add = (MatchSpec("python=2"),)
-        # with get_solver(
-        #     solver_backend,
-        #     tmpdir,
-        #     channel_server,
-        #     ["channel-1"],
-        #     ["linux-64"],
-        #     specs_to_add=specs_to_add,
-        #     prefix_records=final_state,
-        #     history_specs=specs,
-        # ) as solver:
-        #     final_state = solver.solve_final_state()
-        #     prefix = f"{channel_server.get_channel_url("channel-1")}/linux-64"
-        #     order = (
-        #         f"{prefix}::openssl-1.0.1c-0",
-        #         f"{prefix}::readline-6.2-0",
-        #         f"{prefix}::sqlite-3.7.13-0",
-        #         f"{prefix}::system-5.8-1",
-        #         f"{prefix}::tk-8.5.13-0",
-        #         f"{prefix}::zlib-1.2.7-0",
-        #         f"{prefix}::python-2.7.5-0",
-        #         f"{prefix}::numpy-1.7.1-py27_0",
-        #     )
-        #     assert convert_to_dist_str(final_state) == order
