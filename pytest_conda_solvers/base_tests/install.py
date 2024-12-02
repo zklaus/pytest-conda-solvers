@@ -7,6 +7,7 @@ from boltons.setutils import IndexedSet
 from conda.base.context import conda_tests_ctxt_mgmt_def_pol
 from conda.common.io import env_var
 from conda.core.prefix_data import PrefixData
+from conda.core.subdir_data import SubdirData
 from conda.history import History
 from conda.models.channel import Channel
 from conda.models.records import PackageRecord, PrefixRecord
@@ -38,8 +39,6 @@ def get_solver(
         rec.name: PrefixRecord.from_objects(rec) for rec in prefix_records
     }
     spec_map = {spec.name: spec for spec in history_specs}
-    if add_pip:
-        breakpoint()
     with (
         patch.object(History, "get_requested_specs_map", return_value=spec_map),
         env_var(
@@ -48,7 +47,13 @@ def get_solver(
             stack_callback=conda_tests_ctxt_mgmt_def_pol,
         ),
     ):
-        yield solver_backend(tmpdir, channels, subdirs, specs_to_add=specs_to_add)
+        if add_pip:
+            SubdirData._cache_.clear()
+        try:
+            yield solver_backend(tmpdir, channels, subdirs, specs_to_add=specs_to_add)
+        finally:
+            if add_pip:
+                SubdirData._cache_.clear()
 
 
 def convert_to_dist_str(state: IndexedSet[PackageRecord]) -> IndexedSet[str]:

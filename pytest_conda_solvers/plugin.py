@@ -13,6 +13,10 @@ from pytest import (
 )
 from ruamel.yaml import YAML
 
+from conda.gateways.logging import initialize_logging
+
+initialize_logging()
+
 pytest_plugins = "pytest_conda_solvers.fixtures"
 
 
