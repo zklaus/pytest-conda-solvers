@@ -8,12 +8,23 @@ from conda.base.context import conda_tests_ctxt_mgmt_def_pol
 from conda.common.io import env_var
 from conda.core.prefix_data import PrefixData
 from conda.core.subdir_data import SubdirData
+from conda.exceptions import (
+    PackagesNotFoundError,
+    ResolvePackageNotFound,
+    UnsatisfiableError,
+)
 from conda.history import History
 from conda.models.channel import Channel
 from conda.models.records import PackageRecord, PrefixRecord
 from conda.resolve import MatchSpec
 
 from ..server import ChannelServer
+
+EXCEPTION_MAPPING = {
+    "PackagesNotFoundError": PackagesNotFoundError,
+    "ResolvePackageNotFound": ResolvePackageNotFound,
+    "UnsatisfiableError": UnsatisfiableError,
+}
 
 
 @contextmanager
@@ -70,6 +81,14 @@ def ensure_str_tuple(entry):
     return (str(entry),)
 
 
+def ensure_tuple(entry):
+    if entry is None:
+        return ()
+    if isinstance(entry, list):
+        return tuple(entry)
+    return (entry,)
+
+
 def add_base_url(base_url, arch, dist_strs):
     return type(dist_strs)(
         f"{base_url}/{dist_str.replace('${{ arch }}', arch)}" for dist_str in dist_strs
@@ -105,6 +124,17 @@ def prepare_solver_input(raw_solver_input, channel_server, arch):
     return solver_input
 
 
+def prepare_error_information(error):
+    error_info = {
+        "exception": EXCEPTION_MAPPING[error["exception"]],
+        "entries": set(
+            tuple(map(MatchSpec, ensure_tuple(entries))) for entries in error["entries"]
+        ),
+    }
+    assert len(error["entries"]) == len(error_info["entries"])
+    return error_info
+
+
 class TestBasic:
     @pytest.mark.conda_solver_test
     def test_empty(self, env, test, channel_server: ChannelServer):
@@ -127,3 +157,26 @@ class TestBasic:
             channel_server.get_base_url(), "linux-64", test["output"]["final_state"]
         )
         assert sorted(list(convert_to_dist_str(final_state))) == sorted(list(ref))
+        assert convert_to_dist_str(final_state) == ref
+
+    @pytest.mark.conda_solver_test
+    def test_unsatisfiable(self, env, tmpdir, solver_backend, test, channel_server):
+        solver_input = prepare_solver_input(test["input"], channel_server, "linux-64")
+        error_info = prepare_error_information(test["error"])
+        with (
+            get_solver(
+                solver_backend,
+                tmpdir,
+                channel_server,
+                **solver_input,
+            ) as solver,
+            pytest.raises(error_info["exception"]) as exc_info,
+        ):
+            solver.solve_final_state()
+
+        if exc_info.type == UnsatisfiableError:
+            assert set(exc_info.value.unsatisfiable) == set(error_info["entries"])
+        elif exc_info.type == ResolvePackageNotFound:
+            assert set((exc_info.value.bad_deps,)) == set(error_info["entries"])
+        else:
+            raise exc_info

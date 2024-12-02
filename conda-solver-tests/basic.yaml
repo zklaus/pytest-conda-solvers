@@ -198,3 +198,54 @@ tests:
         - channel-1/${{ arch }}::yaml-0.1.4-0
         - channel-1/${{ arch }}::zeromq-2.2.0-1
         - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_unsatisfiable_from_channel_1_1
+    id: B005
+    kind: unsatisfiable
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add:
+        - numpy 1.5*
+        - scipy 0.12.0b1
+      prefix:
+      history_specs:
+    error:
+      exception: UnsatisfiableError
+      entries:
+        - numpy=1.5
+        - [scipy==0.12.0b1, "numpy[version='1.6.*|1.7.*']"]
+
+  - name: test_unsatisfiable_from_channel_1_2
+    id: B006
+    kind: unsatisfiable
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add:
+        - numpy 1.5*
+        - python 3*
+      prefix:
+      history_specs:
+    error:
+      exception: UnsatisfiableError
+      entries:
+        - [numpy=1.5, nose, python=3.3]
+        - [numpy=1.5, "python[version='2.6.*|2.7.*']"]
+        - python=3
+
+  - name: test_unsatisfiable_from_channel_1_3
+    id: B007
+    kind: unsatisfiable
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add:
+        - numpy 1.5*
+        - numpy 1.6*
+      prefix:
+      history_specs:
+    error:
+      exception: ResolvePackageNotFound
+      entries:
+        - numpy[version='1.5.*,1.6.*']
