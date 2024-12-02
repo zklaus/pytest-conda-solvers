@@ -60,7 +60,7 @@ def convert_to_dist_str(state: IndexedSet[PackageRecord]) -> IndexedSet[str]:
     return IndexedSet(prec.dist_str() for prec in state)
 
 
-def ensure_tuple(entry):
+def ensure_str_tuple(entry):
     if entry is None:
         return ()
     if isinstance(entry, str):
@@ -88,18 +88,18 @@ def package_record_from_dist_str(dist_str):
 def prepare_solver_input(raw_solver_input, channel_server, arch):
     solver_input = {}
     for simple_key in ("channels", "subdirs"):
-        solver_input[simple_key] = ensure_tuple(raw_solver_input[simple_key])
+        solver_input[simple_key] = ensure_str_tuple(raw_solver_input[simple_key])
     solver_input["prefix_records"] = tuple(
         package_record_from_dist_str(dist_str)
         for dist_str in add_base_url(
             channel_server.get_base_url(),
             arch,
-            ensure_tuple(raw_solver_input["prefix"]),
+            ensure_str_tuple(raw_solver_input["prefix"]),
         )
     )
     for spec_key in ("specs_to_add", "history_specs"):
         solver_input[spec_key] = tuple(
-            MatchSpec(s) for s in ensure_tuple(raw_solver_input[spec_key])
+            MatchSpec(s) for s in ensure_str_tuple(raw_solver_input[spec_key])
         )
     solver_input["add_pip"] = raw_solver_input.get("add_pip", False)
     return solver_input
