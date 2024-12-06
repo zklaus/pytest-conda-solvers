@@ -1,0 +1,80 @@
+tests:
+  - name: pinned_1_1
+    id: I001
+    kind: solve
+    env:
+      CONDA_PINNED_PACKAGES: python=2.6&iopro<=1.4.2
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: system=5.8=0
+      prefix:
+      history_specs:
+    output:
+      final_state:
+        - channel-1/${{ arch }}::system-5.8-0
+
+  - name: pinned_1_2
+    id: I002
+    kind: solve
+    env:
+      CONDA_PINNED_PACKAGES: python=2.6&iopro<=1.4.2
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: python
+      prefix: channel-1/${{ arch }}::system-5.8-0
+      history_specs: system=5.8=0
+      ignore_pinned: true
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-3.3.2-0
+
+  - name: pinned_1_3
+    id: I002
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: python
+      prefix: channel-1/${{ arch }}::system-5.8-0
+      history_specs: system=5.8=0
+      ignore_pinned: false
+      pinned_packages:
+        - python=2.6
+        - iopro<=1.4.2
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+
+  - name: pinned_1_4
+    id: I002
+    kind: unsatisfiable
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: scikit-learn==0.13
+      prefix: channel-1/${{ arch }}::system-5.8-0
+      history_specs: system=5.8=0
+      ignore_pinned: false
+      pinned_packages:
+        - python=2.6
+        - iopro<=1.4.2
+    error:
+      exception: SpecsConfigurationConflictError
+      requested_specs:
+        - scikit-learn==0.13
+      pinned_specs:
+        - python=2.6
