@@ -11,6 +11,7 @@ from conda.core.subdir_data import SubdirData
 from conda.exceptions import (
     PackagesNotFoundError,
     ResolvePackageNotFound,
+    SpecsConfigurationConflictError,
     UnsatisfiableError,
 )
 from conda.history import History
@@ -23,6 +24,7 @@ from ..server import ChannelServer
 EXCEPTION_MAPPING = {
     "PackagesNotFoundError": PackagesNotFoundError,
     "ResolvePackageNotFound": ResolvePackageNotFound,
+    "SpecsConfigurationConflictError": SpecsConfigurationConflictError,
     "UnsatisfiableError": UnsatisfiableError,
 }
 
@@ -121,17 +123,23 @@ def prepare_solver_input(raw_solver_input, channel_server, arch):
             MatchSpec(s) for s in ensure_str_tuple(raw_solver_input[spec_key])
         )
     solver_input["add_pip"] = raw_solver_input.get("add_pip", False)
-    return solver_input
+    pins = "&".join(raw_solver_input.get("pinned_packages", []))
+    return solver_input, pins
 
 
 def prepare_error_information(error):
+    exception_class = EXCEPTION_MAPPING[error["exception"]]
     error_info = {
-        "exception": EXCEPTION_MAPPING[error["exception"]],
-        "entries": set(
-            tuple(map(MatchSpec, ensure_tuple(entries))) for entries in error["entries"]
-        ),
+        "exception": exception_class,
     }
-    assert len(error["entries"]) == len(error_info["entries"])
+    if exception_class in (UnsatisfiableError, ResolvePackageNotFound):
+        error_info["entries"] = set(
+            tuple(map(MatchSpec, ensure_tuple(entries))) for entries in error["entries"]
+        )
+        assert len(error["entries"]) == len(error_info["entries"])
+    elif exception_class == SpecsConfigurationConflictError:
+        error_info["requested_specs"] = ensure_str_tuple(error["requested_specs"])
+        error_info["pinned_specs"] = ensure_str_tuple(error["pinned_specs"])
     return error_info
 
 
@@ -144,14 +152,20 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
-        solver_input = prepare_solver_input(test["input"], channel_server, "linux-64")
-        with get_solver(
-            solver_backend,
-            tmpdir,
-            channel_server,
-            **solver_input,
-        ) as solver:
-            final_state = solver.solve_final_state()
+        raw_input = test["input"]
+        solver_input, pins = prepare_solver_input(raw_input, channel_server, "linux-64")
+        with env_var(
+            "CONDA_PINNED_PACKAGES",
+            pins,
+            stack_callback=conda_tests_ctxt_mgmt_def_pol,
+        ):
+            with get_solver(
+                solver_backend,
+                tmpdir,
+                channel_server,
+                **solver_input,
+            ) as solver:
+                final_state = solver.solve_final_state()
 
         ref = add_base_url(
             channel_server.get_base_url(), "linux-64", test["output"]["final_state"]
@@ -161,22 +175,35 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_unsatisfiable(self, env, tmpdir, solver_backend, test, channel_server):
-        solver_input = prepare_solver_input(test["input"], channel_server, "linux-64")
+        solver_input, pins = prepare_solver_input(
+            test["input"],
+            channel_server,
+            "linux-64",
+        )
         error_info = prepare_error_information(test["error"])
-        with (
-            get_solver(
-                solver_backend,
-                tmpdir,
-                channel_server,
-                **solver_input,
-            ) as solver,
-            pytest.raises(error_info["exception"]) as exc_info,
+        with env_var(
+            "CONDA_PINNED_PACKAGES",
+            pins,
+            stack_callback=conda_tests_ctxt_mgmt_def_pol,
         ):
-            solver.solve_final_state()
+            with (
+                get_solver(
+                    solver_backend,
+                    tmpdir,
+                    channel_server,
+                    **solver_input,
+                ) as solver,
+                pytest.raises(error_info["exception"]) as exc_info,
+            ):
+                solver.solve_final_state()
 
         if exc_info.type == UnsatisfiableError:
             assert set(exc_info.value.unsatisfiable) == set(error_info["entries"])
         elif exc_info.type == ResolvePackageNotFound:
             assert set((exc_info.value.bad_deps,)) == set(error_info["entries"])
+        elif exc_info.type == SpecsConfigurationConflictError:
+            kwargs = exc_info.value._kwargs
+            assert set(kwargs["requested_specs"]) == set(error_info["requested_specs"])
+            assert set(kwargs["pinned_specs"]) == set(error_info["pinned_specs"])
         else:
-            raise exc_info
+            raise exc_info.value
