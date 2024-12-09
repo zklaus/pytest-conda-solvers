@@ -18,7 +18,11 @@ class TestSubdir(Enum):
         return self.value
 
 
-class TestInput(Struct):
+class TestInput(
+    Struct,
+    frozen=True,
+    forbid_unknown_fields=True,
+):
     channels: TestChannel | list[TestChannel] | None = None
     subdirs: TestSubdir | list[TestSubdir] | None = None
     specs_to_add: str | list[str] | None = None
@@ -28,22 +32,40 @@ class TestInput(Struct):
     pinned_packages: str | list[str] = []
 
 
-class TestOutput(Struct):
+class TestOutput(
+    Struct,
+    frozen=True,
+    forbid_unknown_fields=True,
+):
     final_state: str | list[str] | None = None
 
 
-class UnsatisfiableTestError(Struct, tag_field="exception", tag="UnsatisfiableError"):
+class UnsatisfiableTestError(
+    Struct,
+    tag_field="exception",
+    tag="UnsatisfiableError",
+    frozen=True,
+    forbid_unknown_fields=True,
+):
     entries: str | list[str | list[str]]
 
 
 class ResolvePackageNotFoundTestError(
-    Struct, tag_field="exception", tag="ResolvePackageNotFound"
+    Struct,
+    tag_field="exception",
+    tag="ResolvePackageNotFound",
+    frozen=True,
+    forbid_unknown_fields=True,
 ):
     entries: str | list[str | list[str]]
 
 
 class SpecsConfigurationConflictTestError(
-    Struct, tag_field="exception", tag="SpecsConfigurationConflictError"
+    Struct,
+    tag_field="exception",
+    tag="SpecsConfigurationConflictError",
+    frozen=True,
+    forbid_unknown_fields=True,
 ):
     requested_specs: str | list[str | list[str]]
     pinned_specs: str | list[str | list[str]]
@@ -56,7 +78,13 @@ type TestError = (
 )
 
 
-class SolveTestSpec(Struct, tag_field="kind", tag="solve"):
+class SolveTestSpec(
+    Struct,
+    tag_field="kind",
+    tag="solve",
+    frozen=True,
+    forbid_unknown_fields=True,
+):
     name: str
     id: str
     input: TestInput
@@ -64,7 +92,13 @@ class SolveTestSpec(Struct, tag_field="kind", tag="solve"):
     test_function: str = "test_solve"
 
 
-class UnsatisfiableTestSpec(Struct, tag_field="kind", tag="unsatisfiable"):
+class UnsatisfiableTestSpec(
+    Struct,
+    tag_field="kind",
+    tag="unsatisfiable",
+    frozen=True,
+    forbid_unknown_fields=True,
+):
     name: str
     id: str
     input: TestInput
