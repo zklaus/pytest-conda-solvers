@@ -130,7 +130,10 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         )
     solver_input["add_pip"] = raw_solver_input.add_pip
     pins = "&".join(raw_solver_input.pinned_packages)
-    return solver_input, pins
+    flags = {}
+    if (ignore_pinned := raw_solver_input.ignore_pinned) is not None:
+        flags["ignore_pinned"] = ignore_pinned
+    return solver_input, pins, flags
 
 
 def prepare_error_information(error):
@@ -158,7 +161,7 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
-        solver_input, pins = prepare_solver_input(
+        solver_input, pins, flags = prepare_solver_input(
             test.input, channel_server, "linux-64"
         )
         with env_var(
@@ -172,7 +175,7 @@ class TestBasic:
                 channel_server,
                 **solver_input,
             ) as solver:
-                final_state = solver.solve_final_state()
+                final_state = solver.solve_final_state(**flags)
 
         ref = add_base_url(
             channel_server.get_base_url(), "linux-64", test.output.final_state
@@ -182,7 +185,7 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_unsatisfiable(self, env, tmpdir, solver_backend, test, channel_server):
-        solver_input, pins = prepare_solver_input(
+        solver_input, pins, flags = prepare_solver_input(
             test.input,
             channel_server,
             "linux-64",
@@ -202,7 +205,7 @@ class TestBasic:
                 ) as solver,
                 pytest.raises(error_info["exception"]) as exc_info,
             ):
-                solver.solve_final_state()
+                solver.solve_final_state(**flags)
 
         if exc_info.type == UnsatisfiableError:
             assert set(exc_info.value.unsatisfiable) == set(error_info["entries"])
