@@ -9,7 +9,6 @@ from conda.common.io import env_var
 from conda.core.prefix_data import PrefixData
 from conda.core.subdir_data import SubdirData
 from conda.exceptions import (
-    PackagesNotFoundError,
     ResolvePackageNotFound,
     SpecsConfigurationConflictError,
     UnsatisfiableError,
@@ -19,13 +18,18 @@ from conda.models.channel import Channel
 from conda.models.records import PackageRecord, PrefixRecord
 from conda.resolve import MatchSpec
 
+from ..models import (
+    ResolvePackageNotFoundTestError,
+    SpecsConfigurationConflictTestError,
+    TestInput,
+    UnsatisfiableTestError,
+)
 from ..server import ChannelServer
 
 EXCEPTION_MAPPING = {
-    "PackagesNotFoundError": PackagesNotFoundError,
-    "ResolvePackageNotFound": ResolvePackageNotFound,
-    "SpecsConfigurationConflictError": SpecsConfigurationConflictError,
-    "UnsatisfiableError": UnsatisfiableError,
+    ResolvePackageNotFoundTestError: ResolvePackageNotFound,
+    SpecsConfigurationConflictTestError: SpecsConfigurationConflictError,
+    UnsatisfiableTestError: UnsatisfiableError,
 }
 
 
@@ -106,40 +110,42 @@ def package_record_from_dist_str(dist_str):
     return PackageRecord.from_objects(**spec)
 
 
-def prepare_solver_input(raw_solver_input, channel_server, arch):
+def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
     solver_input = {}
     for simple_key in ("channels", "subdirs"):
-        solver_input[simple_key] = ensure_str_tuple(raw_solver_input[simple_key])
+        solver_input[simple_key] = ensure_str_tuple(
+            getattr(raw_solver_input, simple_key)
+        )
     solver_input["prefix_records"] = tuple(
         package_record_from_dist_str(dist_str)
         for dist_str in add_base_url(
             channel_server.get_base_url(),
             arch,
-            ensure_str_tuple(raw_solver_input["prefix"]),
+            ensure_str_tuple(raw_solver_input.prefix),
         )
     )
     for spec_key in ("specs_to_add", "history_specs"):
         solver_input[spec_key] = tuple(
-            MatchSpec(s) for s in ensure_str_tuple(raw_solver_input[spec_key])
+            MatchSpec(s) for s in ensure_str_tuple(getattr(raw_solver_input, spec_key))
         )
-    solver_input["add_pip"] = raw_solver_input.get("add_pip", False)
-    pins = "&".join(raw_solver_input.get("pinned_packages", []))
+    solver_input["add_pip"] = raw_solver_input.add_pip
+    pins = "&".join(raw_solver_input.pinned_packages)
     return solver_input, pins
 
 
 def prepare_error_information(error):
-    exception_class = EXCEPTION_MAPPING[error["exception"]]
+    exception_class = EXCEPTION_MAPPING[type(error)]
     error_info = {
         "exception": exception_class,
     }
     if exception_class in (UnsatisfiableError, ResolvePackageNotFound):
         error_info["entries"] = set(
-            tuple(map(MatchSpec, ensure_tuple(entries))) for entries in error["entries"]
+            tuple(map(MatchSpec, ensure_tuple(entries))) for entries in error.entries
         )
-        assert len(error["entries"]) == len(error_info["entries"])
+        assert len(error.entries) == len(error_info["entries"])
     elif exception_class == SpecsConfigurationConflictError:
-        error_info["requested_specs"] = ensure_str_tuple(error["requested_specs"])
-        error_info["pinned_specs"] = ensure_str_tuple(error["pinned_specs"])
+        error_info["requested_specs"] = ensure_str_tuple(error.requested_specs)
+        error_info["pinned_specs"] = ensure_str_tuple(error.pinned_specs)
     return error_info
 
 
@@ -152,8 +158,9 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
-        raw_input = test["input"]
-        solver_input, pins = prepare_solver_input(raw_input, channel_server, "linux-64")
+        solver_input, pins = prepare_solver_input(
+            test.input, channel_server, "linux-64"
+        )
         with env_var(
             "CONDA_PINNED_PACKAGES",
             pins,
@@ -168,7 +175,7 @@ class TestBasic:
                 final_state = solver.solve_final_state()
 
         ref = add_base_url(
-            channel_server.get_base_url(), "linux-64", test["output"]["final_state"]
+            channel_server.get_base_url(), "linux-64", test.output.final_state
         )
         assert sorted(list(convert_to_dist_str(final_state))) == sorted(list(ref))
         assert convert_to_dist_str(final_state) == ref
@@ -176,11 +183,11 @@ class TestBasic:
     @pytest.mark.conda_solver_test
     def test_unsatisfiable(self, env, tmpdir, solver_backend, test, channel_server):
         solver_input, pins = prepare_solver_input(
-            test["input"],
+            test.input,
             channel_server,
             "linux-64",
         )
-        error_info = prepare_error_information(test["error"])
+        error_info = prepare_error_information(test.error)
         with env_var(
             "CONDA_PINNED_PACKAGES",
             pins,

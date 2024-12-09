@@ -1,6 +1,7 @@
 from importlib import util
 from typing import Any, Iterable, Union
 
+import msgspec
 import pytest
 from pytest import (
     Collector,
@@ -11,9 +12,10 @@ from pytest import (
     PytestPluginManager,
     Session,
 )
-from ruamel.yaml import YAML
 
 from conda.gateways.logging import initialize_logging
+
+from .models import TestModule
 
 initialize_logging()
 
@@ -40,8 +42,8 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
     is_conda_solver_test = metafunc.definition.get_closest_marker("conda_solver_test")
     if is_conda_solver_test:
         test_entry = metafunc.definition.parent.parent.test_entry
-        if f"test_{test_entry['kind']}" == metafunc.definition.name:
-            ids = (test_entry["name"].replace(" ", "_"),)
+        if test_entry.test_function == metafunc.definition.name:
+            ids = (test_entry.name.replace(" ", "_"),)
             metafunc.parametrize("test", (test_entry,), ids=ids)
 
 
@@ -73,16 +75,16 @@ class CondaSolverYamlFile(pytest.File):
         yield from self._collect_path()
 
     def _collect_path(self):
-        yaml = YAML(typ="safe")
-        raw = yaml.load(self.path.open(encoding="utf-8"))
-        for item in raw["tests"]:
+        data = self.path.open(encoding="utf-8").read()
+        decoded_data = msgspec.yaml.decode(data, type=TestModule)
+        for item in decoded_data.tests:
             module = load_module()
             yield CondaSolverTestFile.from_parent(
                 self,
                 path=self.path,
                 obj=module,
                 test_entry=item,
-                name=f"{item['name']}-file",
+                name=f"{item.name}-file",
             )
 
 
@@ -111,7 +113,7 @@ class CondaSolverTestFile(pytest.Module):
         self._register_setup_function_fixture()
         self.session._fixturemanager.parsefactories(self)
 
-        name = self.test_entry["name"].replace(" ", "_")
+        name = self.test_entry.name.replace(" ", "_")
 
         yield CondaSolverTestClass.from_parent(
             self,

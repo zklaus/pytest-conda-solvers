@@ -2,14 +2,15 @@ tests:
   - name: pinned_1_1
     id: I001
     kind: solve
-    env:
-      CONDA_PINNED_PACKAGES: python=2.6&iopro<=1.4.2
     input:
       channels: channel-1
       subdirs: linux-64
       specs_to_add: system=5.8=0
       prefix:
       history_specs:
+      pinned_packages:
+        - python=2.6
+        - iopro<=1.4.2
     output:
       final_state:
         - channel-1/${{ arch }}::system-5.8-0
@@ -17,8 +18,6 @@ tests:
   - name: pinned_1_2
     id: I002
     kind: solve
-    env:
-      CONDA_PINNED_PACKAGES: python=2.6&iopro<=1.4.2
     input:
       channels: channel-1
       subdirs: linux-64
@@ -26,6 +25,9 @@ tests:
       prefix: channel-1/${{ arch }}::system-5.8-0
       history_specs: system=5.8=0
       ignore_pinned: true
+      pinned_packages:
+        - python=2.6
+        - iopro<=1.4.2
     output:
       final_state:
         - channel-1/${{ arch }}::openssl-1.0.1c-0
