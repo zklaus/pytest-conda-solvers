@@ -78,3 +78,36 @@ tests:
         - scikit-learn==0.13
       pinned_specs:
         - python=2.6
+
+  - name: pinned_1_5
+    id: I005
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: numba
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+      history_specs:
+        - python
+        - system=5.8=0
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::argparse-1.2.1-py26_0
+        - channel-1/${{ arch }}::llvmpy-0.11.2-py26_0
+        - channel-1/${{ arch }}::numpy-1.7.1-py26_0
+        - channel-1/${{ arch }}::numba-0.8.1-np17py26_0
