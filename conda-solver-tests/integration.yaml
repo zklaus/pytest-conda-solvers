@@ -37,7 +37,7 @@ tests:
         - channel-1/${{ arch }}::python-3.3.2-0
 
   - name: pinned_1_3
-    id: I002
+    id: I003
     kind: solve
     input:
       channels: channel-1
@@ -60,7 +60,7 @@ tests:
         - channel-1/${{ arch }}::python-2.6.8-6
 
   - name: pinned_1_4
-    id: I002
+    id: I004
     kind: unsatisfiable
     input:
       channels: channel-1
