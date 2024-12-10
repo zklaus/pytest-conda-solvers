@@ -1,6 +1,7 @@
 tests:
   - name: pinned_1_1
     id: I001
+    provenance: tests/core/test_solve.py::test_pinned_1::1
     kind: solve
     input:
       channels: channel-1
@@ -17,6 +18,7 @@ tests:
 
   - name: pinned_1_2
     id: I002
+    provenance: tests/core/test_solve.py::test_pinned_1::2
     kind: solve
     input:
       channels: channel-1
@@ -40,6 +42,7 @@ tests:
 
   - name: pinned_1_3
     id: I003
+    provenance: tests/core/test_solve.py::test_pinned_1::3
     kind: solve
     input:
       channels: channel-1
@@ -63,6 +66,7 @@ tests:
 
   - name: pinned_1_4
     id: I004
+    provenance: tests/core/test_solve.py::test_pinned_1::4
     kind: unsatisfiable
     input:
       channels: channel-1
@@ -83,6 +87,7 @@ tests:
 
   - name: pinned_1_5
     id: I005
+    provenance: tests/core/test_solve.py::test_pinned_1::5
     kind: solve
     input:
       channels: channel-1
@@ -113,3 +118,152 @@ tests:
         - channel-1/${{ arch }}::llvmpy-0.11.2-py26_0
         - channel-1/${{ arch }}::numpy-1.7.1-py26_0
         - channel-1/${{ arch }}::numba-0.8.1-np17py26_0
+
+  # - name: pinned_1_6
+  #   id: I006
+  #   kind: solve
+  #   input:
+  #     channels: channel-1
+  #     subdirs: linux-64
+  #     specs_to_add: python
+  #     prefix:
+  #       - channel-1/${{ arch }}::openssl-1.0.1c-0
+  #       - channel-1/${{ arch }}::readline-6.2-0
+  #       - channel-1/${{ arch }}::sqlite-3.7.13-0
+  #       - channel-1/${{ arch }}::system-5.8-0
+  #       - channel-1/${{ arch }}::tk-8.5.13-0
+  #       - channel-1/${{ arch }}::zlib-1.2.7-0
+  #       - channel-1/${{ arch }}::llvm-3.2-0
+  #       - channel-1/${{ arch }}::python-2.6.8-6
+  #       - channel-1/${{ arch }}::argparse-1.2.1-py26_0
+  #       - channel-1/${{ arch }}::llvmpy-0.11.2-py26_0
+  #       - channel-1/${{ arch }}::numpy-1.7.1-py26_0
+  #       - channel-1/${{ arch }}::numba-0.8.1-np17py26_0
+  #     history_specs:
+  #       - python
+  #       - system=5.8=0
+  #       - numba
+  #   output:
+  #     final_state:
+  #       - channel-1/${{ arch }}::openssl-1.0.1c-0
+  #       - channel-1/${{ arch }}::readline-6.2-0
+  #       - channel-1/${{ arch }}::sqlite-3.7.13-0
+  #       - channel-1/${{ arch }}::system-5.8-1
+  #       - channel-1/${{ arch }}::tk-8.5.13-0
+  #       - channel-1/${{ arch }}::zlib-1.2.7-0
+  #       - channel-1/${{ arch }}::llvm-3.2-0
+  #       - channel-1/${{ arch }}::python-2.6.8-6
+  #       - channel-1/${{ arch }}::argparse-1.2.1-py26_0
+  #       - channel-1/${{ arch }}::llvmpy-0.11.2-py26_0
+  #       - channel-1/${{ arch }}::numpy-1.7.1-py26_0
+  #       - channel-1/${{ arch }}::numba-0.8.1-np17py26_0
+
+#         specs_to_add = (MatchSpec("python"),)
+#         history_specs = (
+#             MatchSpec("python"),
+#             MatchSpec("system=5.8=0"),
+#             MatchSpec("numba"),
+#         )
+#         with get_solver(
+#             tmpdir,
+#             specs_to_add=specs_to_add,
+#             prefix_records=final_state_3,
+#             history_specs=history_specs,
+#         ) as solver:
+#             final_state_4 = solver.solve_final_state(
+#                 update_modifier=UpdateModifier.UPDATE_DEPS
+#             )
+#             # PrefixDag(final_state_1, specs).open_url()
+#             pprint(convert_to_dist_str(final_state_4))
+#             order = add_subdir_to_iter(
+#                 (
+#                     "channel-1::openssl-1.0.1c-0",
+#                     "channel-1::readline-6.2-0",
+#                     "channel-1::sqlite-3.7.13-0",
+#                     "channel-1::system-5.8-1",
+#                     "channel-1::tk-8.5.13-0",
+#                     "channel-1::zlib-1.2.7-0",
+#                     "channel-1::llvm-3.2-0",
+#                     "channel-1::python-2.6.8-6",
+#                     "channel-1::argparse-1.2.1-py26_0",
+#                     "channel-1::llvmpy-0.11.2-py26_0",
+#                     "channel-1::numpy-1.7.1-py26_0",
+#                     "channel-1::numba-0.8.1-np17py26_0",
+#                 )
+#             )
+#             assert convert_to_dist_str(final_state_4) == order
+
+#         specs_to_add = (MatchSpec("python"),)
+#         history_specs = (
+#             MatchSpec("python"),
+#             MatchSpec("system=5.8=0"),
+#             MatchSpec("numba"),
+#         )
+#         with get_solver(
+#             tmpdir,
+#             specs_to_add=specs_to_add,
+#             prefix_records=final_state_4,
+#             history_specs=history_specs,
+#         ) as solver:
+#             final_state_5 = solver.solve_final_state(
+#                 update_modifier=UpdateModifier.UPDATE_ALL
+#             )
+#             # PrefixDag(final_state_1, specs).open_url()
+#             pprint(convert_to_dist_str(final_state_5))
+#             order = add_subdir_to_iter(
+#                 (
+#                     "channel-1::openssl-1.0.1c-0",
+#                     "channel-1::readline-6.2-0",
+#                     "channel-1::sqlite-3.7.13-0",
+#                     "channel-1::system-5.8-1",
+#                     "channel-1::tk-8.5.13-0",
+#                     "channel-1::zlib-1.2.7-0",
+#                     "channel-1::llvm-3.2-0",
+#                     "channel-1::python-2.6.8-6",
+#                     "channel-1::argparse-1.2.1-py26_0",
+#                     "channel-1::llvmpy-0.11.2-py26_0",
+#                     "channel-1::numpy-1.7.1-py26_0",
+#                     "channel-1::numba-0.8.1-np17py26_0",
+#                 )
+#             )
+#             assert convert_to_dist_str(final_state_5) == order
+
+#     # now update without pinning
+#     if context.solver == "libmamba":
+#         # LIBMAMBA ADJUSTMENT:
+#         # libmamba decides to stay in python=2.6 unless explicit
+#         specs_to_add = (MatchSpec("python=3"),)
+#     else:
+#         specs_to_add = (MatchSpec("python"),)
+#     history_specs = (
+#         MatchSpec("python"),
+#         MatchSpec("system=5.8=0"),
+#         MatchSpec("numba"),
+#     )
+#     with get_solver(
+#         tmpdir,
+#         specs_to_add=specs_to_add,
+#         prefix_records=final_state_4,
+#         history_specs=history_specs,
+#     ) as solver:
+#         final_state_5 = solver.solve_final_state(
+#             update_modifier=UpdateModifier.UPDATE_ALL
+#         )
+#         # PrefixDag(final_state_1, specs).open_url()
+#         print(convert_to_dist_str(final_state_5))
+#         order = add_subdir_to_iter(
+#             (
+#                 "channel-1::openssl-1.0.1c-0",
+#                 "channel-1::readline-6.2-0",
+#                 "channel-1::sqlite-3.7.13-0",
+#                 "channel-1::system-5.8-1",
+#                 "channel-1::tk-8.5.13-0",
+#                 "channel-1::zlib-1.2.7-0",
+#                 "channel-1::llvm-3.2-0",
+#                 "channel-1::python-3.3.2-0",
+#                 "channel-1::llvmpy-0.11.2-py33_0",
+#                 "channel-1::numpy-1.7.1-py33_0",
+#                 "channel-1::numba-0.8.1-np17py33_0",
+#             )
+#         )
+#         assert convert_to_dist_str(final_state_5) == order

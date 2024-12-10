@@ -1,6 +1,7 @@
 tests:
   - name: solve_1_1
     id: B001
+    provenance: tests/core/test_solve.py::test_solve_1::1
     kind: solve
     input:
       channels: channel-1
@@ -21,6 +22,7 @@ tests:
 
   - name: solve_1_2
     id: B002
+    provenance: tests/core/test_solve.py::test_solve_1::2
     kind: solve
     input:
       channels: channel-1
@@ -51,6 +53,7 @@ tests:
 
   - name: test_iopro_mkl
     id: B003
+    provenance: conda/testing/solver_helpers.py::SolverTests.test_iopro_mkl
     kind: solve
     input:
       channels: channel-1
@@ -79,6 +82,7 @@ tests:
 
   - name: test_anaconda_nomkl
     id: B004
+    provenance: conda/testing/solver_helpers.py::SolverTests.test_anaconda_nomkl
     kind: solve
     input:
       channels: channel-1
@@ -201,6 +205,7 @@ tests:
 
   - name: test_unsatisfiable_from_channel_1_1
     id: B005
+    provenance: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::1
     kind: unsatisfiable
     input:
       channels: channel-1
@@ -218,6 +223,7 @@ tests:
 
   - name: test_unsatisfiable_from_channel_1_2
     id: B006
+    provenance: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::2
     kind: unsatisfiable
     input:
       channels: channel-1
@@ -236,6 +242,7 @@ tests:
 
   - name: test_unsatisfiable_from_channel_1_3
     id: B007
+    provenance: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
     kind: unsatisfiable
     input:
       channels: channel-1

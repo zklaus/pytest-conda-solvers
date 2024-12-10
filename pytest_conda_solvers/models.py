@@ -88,6 +88,7 @@ class SolveTestSpec(
 ):
     name: str
     id: str
+    provenance: str
     input: TestInput
     output: TestOutput
     test_function: str = "test_solve"
@@ -102,6 +103,7 @@ class UnsatisfiableTestSpec(
 ):
     name: str
     id: str
+    provenance: str
     input: TestInput
     error: TestError
     test_function: str = "test_unsatisfiable"
