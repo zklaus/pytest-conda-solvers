@@ -32,6 +32,7 @@ class TestInput(
     add_pip: bool = False
     ignore_pinned: bool | None = None
     pinned_packages: str | list[str] | None = None
+    aggressive_update_packages: str | list[str] | None = None
     update_modifier: UpdateModifier | None = None
 
 

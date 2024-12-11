@@ -131,8 +131,18 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
     pins = (
         "&".join(pp) if (pp := raw_solver_input.pinned_packages) is not None else None
     )
+    aggressive_update_packages = (
+        ",".join(aup)
+        if (aup := raw_solver_input.aggressive_update_packages) is not None
+        else None
+    )
     env_vars = {
-        name: val for name, val in (("CONDA_PINNED_PACKAGES", pins),) if val is not None
+        name: val
+        for name, val in (
+            ("CONDA_PINNED_PACKAGES", pins),
+            ("CONDA_AGGRESSIVE_UPDATE_PACKAGES", aggressive_update_packages),
+        )
+        if val is not None
     }
     bool_flags = ("ignore_pinned",)
     enum_flags = ("update_modifier",)
