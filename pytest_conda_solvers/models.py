@@ -1,5 +1,6 @@
 from enum import Enum
 
+from conda.core.solve import UpdateModifier
 from msgspec import Struct
 
 
@@ -31,6 +32,7 @@ class TestInput(
     add_pip: bool = False
     ignore_pinned: bool | None = None
     pinned_packages: str | list[str] = []
+    update_modifier: UpdateModifier | None = None
 
 
 class TestOutput(

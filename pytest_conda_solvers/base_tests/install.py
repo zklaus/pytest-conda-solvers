@@ -130,9 +130,17 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         )
     solver_input["add_pip"] = raw_solver_input.add_pip
     pins = "&".join(raw_solver_input.pinned_packages)
-    flags = {}
-    if (ignore_pinned := raw_solver_input.ignore_pinned) is not None:
-        flags["ignore_pinned"] = ignore_pinned
+    bool_flags = ("ignore_pinned",)
+    enum_flags = ("update_modifier",)
+    flags = {
+        flag: v
+        for flag in bool_flags
+        if (v := getattr(raw_solver_input, flag)) is not None
+    } | {
+        flag: v.value
+        for flag in enum_flags
+        if (v := getattr(raw_solver_input, flag)) is not None
+    }
     return solver_input, pins, flags
 
 
