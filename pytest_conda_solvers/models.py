@@ -31,7 +31,7 @@ class TestInput(
     history_specs: str | list[str] | None = None
     add_pip: bool = False
     ignore_pinned: bool | None = None
-    pinned_packages: str | list[str] = []
+    pinned_packages: str | list[str] | None = None
     update_modifier: UpdateModifier | None = None
 
 

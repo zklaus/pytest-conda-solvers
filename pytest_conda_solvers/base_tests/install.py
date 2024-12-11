@@ -1,11 +1,11 @@
 import re
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from unittest.mock import patch
 
 import pytest
 from boltons.setutils import IndexedSet
 from conda.base.context import conda_tests_ctxt_mgmt_def_pol
-from conda.common.io import env_var
+from conda.common.io import env_vars
 from conda.core.prefix_data import PrefixData
 from conda.core.subdir_data import SubdirData
 from conda.exceptions import (
@@ -58,9 +58,8 @@ def get_solver(
     spec_map = {spec.name: spec for spec in history_specs}
     with (
         patch.object(History, "get_requested_specs_map", return_value=spec_map),
-        env_var(
-            "CONDA_ADD_PIP_AS_PYTHON_DEPENDENCY",
-            str(add_pip).lower(),
+        env_vars(
+            {"CONDA_ADD_PIP_AS_PYTHON_DEPENDENCY": str(add_pip).lower()},
             stack_callback=conda_tests_ctxt_mgmt_def_pol,
         ),
     ):
@@ -129,7 +128,12 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
             MatchSpec(s) for s in ensure_str_tuple(getattr(raw_solver_input, spec_key))
         )
     solver_input["add_pip"] = raw_solver_input.add_pip
-    pins = "&".join(raw_solver_input.pinned_packages)
+    pins = (
+        "&".join(pp) if (pp := raw_solver_input.pinned_packages) is not None else None
+    )
+    env_vars = {
+        name: val for name, val in (("CONDA_PINNED_PACKAGES", pins),) if val is not None
+    }
     bool_flags = ("ignore_pinned",)
     enum_flags = ("update_modifier",)
     flags = {
@@ -141,7 +145,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         for flag in enum_flags
         if (v := getattr(raw_solver_input, flag)) is not None
     }
-    return solver_input, pins, flags
+    return solver_input, env_vars, flags
 
 
 def prepare_error_information(error):
@@ -169,13 +173,16 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
-        solver_input, pins, flags = prepare_solver_input(
+        solver_input, env, flags = prepare_solver_input(
             test.input, channel_server, "linux-64"
         )
-        with env_var(
-            "CONDA_PINNED_PACKAGES",
-            pins,
-            stack_callback=conda_tests_ctxt_mgmt_def_pol,
+        with (
+            env_vars(
+                env,
+                stack_callback=conda_tests_ctxt_mgmt_def_pol,
+            )
+            if len(env) > 0
+            else nullcontext()
         ):
             with get_solver(
                 solver_backend,
@@ -193,16 +200,19 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_unsatisfiable(self, env, tmpdir, solver_backend, test, channel_server):
-        solver_input, pins, flags = prepare_solver_input(
+        solver_input, env, flags = prepare_solver_input(
             test.input,
             channel_server,
             "linux-64",
         )
         error_info = prepare_error_information(test.error)
-        with env_var(
-            "CONDA_PINNED_PACKAGES",
-            pins,
-            stack_callback=conda_tests_ctxt_mgmt_def_pol,
+        with (
+            env_vars(
+                env,
+                stack_callback=conda_tests_ctxt_mgmt_def_pol,
+            )
+            if len(env) > 0
+            else nullcontext()
         ):
             with (
                 get_solver(
