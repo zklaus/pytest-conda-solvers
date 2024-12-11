@@ -256,3 +256,131 @@ tests:
       exception: ResolvePackageNotFound
       entries:
         - numpy[version='1.5.*,1.6.*']
+
+  - name: test_aggressive_update_packages_1
+    id: B008
+    provenance: tests/core/test_solve.py::test_aggressive_update_packages::1
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: libpng=1.2
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+
+  - name: test_aggressive_update_packages_2
+    id: B009
+    provenance: tests/core/test_solve.py::test_aggressive_update_packages::2
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cmake=2.8.9
+      prefix:
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+      history_specs:
+        - libpng=1.2
+      aggressive_update_packages:
+        - libpng
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cmake-2.8.9-0
+        - channel-1/${{ arch }}::libpng-1.5.13-1
+
+  - name: test_aggressive_update_packages_3
+    id: B010
+    provenance: tests/core/test_solve.py::test_aggressive_update_packages::3
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cmake=2.8.9
+      prefix:
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+      history_specs:
+        - libpng=1.2
+      aggressive_update_packages:
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cmake-2.8.9-0
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+
+  - name: test_aggressive_update_packages_4
+    id: B011
+    provenance: tests/core/test_solve.py::test_aggressive_update_packages::4
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cmake>2.8.9
+      prefix:
+        - channel-1/${{ arch }}::cmake-2.8.9-0
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+      history_specs:
+        - libpng=1.2
+        - cmake=2.8.9
+      aggressive_update_packages:
+        - libpng
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cmake-2.8.10.2-0
+        - channel-1/${{ arch }}::libpng-1.5.13-1
+
+  - name: test_aggressive_update_packages_5
+    id: B012
+    provenance: tests/core/test_solve.py::test_aggressive_update_packages::5
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cmake=2.8.9
+      prefix:
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+      history_specs:
+        - libpng
+      aggressive_update_packages:
+        - libpng
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cmake-2.8.9-0
+        - channel-1/${{ arch }}::libpng-1.5.13-1
+
+  - name: test_aggressive_update_packages_6
+    id: B013
+    provenance: tests/core/test_solve.py::test_aggressive_update_packages::6
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cmake=2.8.9
+      prefix:
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+      history_specs:
+        - libpng
+      aggressive_update_packages:
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cmake-2.8.9-0
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+
+  - name: test_aggressive_update_packages_7
+    id: B014
+    provenance: tests/core/test_solve.py::test_aggressive_update_packages::7
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cmake>2.8.9
+      prefix:
+        - channel-1/${{ arch }}::cmake-2.8.9-0
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+      history_specs:
+        - libpng
+        - cmake=2.8.9
+      aggressive_update_packages:
+        - libpng
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cmake-2.8.10.2-0
+        - channel-1/${{ arch }}::libpng-1.5.13-1
