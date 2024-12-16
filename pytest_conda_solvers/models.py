@@ -33,6 +33,7 @@ class TestInput(
     ignore_pinned: bool | None = None
     pinned_packages: str | list[str] | None = None
     aggressive_update_packages: str | list[str] | None = None
+    auto_update_conda: bool | None = None
     update_modifier: UpdateModifier | None = None
 
 

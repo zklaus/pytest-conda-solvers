@@ -140,6 +140,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         for name, val in (
             get_env_pair(raw_solver_input, "pinned_packages", "&"),
             get_env_pair(raw_solver_input, "aggressive_update_packages", ","),
+            get_env_pair(raw_solver_input, "auto_update_conda"),
         )
         if val is not None
     }
