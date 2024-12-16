@@ -175,16 +175,12 @@ def prepare_error_information(error):
 
 
 class TestBasic:
-    @pytest.mark.conda_solver_test
-    def test_empty(self, env, test, channel_server: ChannelServer):
-        assert True
-        # env.repo_packages = index_packages
-        # assert env.install() == set()
-
-    @pytest.mark.conda_solver_test
-    def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
+    @contextmanager
+    def _setup_solver(self, solver_backend, channel_server, tmpdir, test_input):
         solver_input, env, flags = prepare_solver_input(
-            test.input, channel_server, "linux-64"
+            test_input,
+            channel_server,
+            "linux-64",
         )
         with (
             env_vars(
@@ -200,7 +196,21 @@ class TestBasic:
                 channel_server,
                 **solver_input,
             ) as solver:
-                final_state = solver.solve_final_state(**flags)
+                yield solver, flags
+
+    @pytest.mark.conda_solver_test
+    def test_empty(self, env, test, channel_server: ChannelServer):
+        assert True
+        # env.repo_packages = index_packages
+        # assert env.install() == set()
+
+    @pytest.mark.conda_solver_test
+    def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
+        with self._setup_solver(solver_backend, channel_server, tmpdir, test.input) as (
+            solver,
+            flags,
+        ):
+            final_state = solver.solve_final_state(**flags)
 
         ref = add_base_url(
             channel_server.get_base_url(), "linux-64", test.output.final_state
@@ -210,30 +220,15 @@ class TestBasic:
 
     @pytest.mark.conda_solver_test
     def test_unsatisfiable(self, env, tmpdir, solver_backend, test, channel_server):
-        solver_input, env, flags = prepare_solver_input(
-            test.input,
-            channel_server,
-            "linux-64",
-        )
         error_info = prepare_error_information(test.error)
         with (
-            env_vars(
-                env,
-                stack_callback=conda_tests_ctxt_mgmt_def_pol,
-            )
-            if len(env) > 0
-            else nullcontext()
+            self._setup_solver(solver_backend, channel_server, tmpdir, test.input) as (
+                solver,
+                flags,
+            ),
+            pytest.raises(error_info["exception"]) as exc_info,
         ):
-            with (
-                get_solver(
-                    solver_backend,
-                    tmpdir,
-                    channel_server,
-                    **solver_input,
-                ) as solver,
-                pytest.raises(error_info["exception"]) as exc_info,
-            ):
-                solver.solve_final_state(**flags)
+            solver.solve_final_state(**flags)
 
         if exc_info.type == UnsatisfiableError:
             assert set(exc_info.value.unsatisfiable) == set(error_info["entries"])
