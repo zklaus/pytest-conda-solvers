@@ -6,6 +6,8 @@ from msgspec import Struct
 
 class TestChannel(Enum):
     CHANNEL_1 = "channel-1"
+    CHANNEL_2 = "channel-2"
+    CHANNEL_4 = "channel-4"
 
     def __str__(self):
         return self.value
@@ -14,6 +16,15 @@ class TestChannel(Enum):
 class TestSubdir(Enum):
     NOARCH = "noarch"
     LINUX_64 = "linux-64"
+
+    def __str__(self):
+        return self.value
+
+
+class ChannelPriority(Enum):
+    STRICT = "strict"
+    FLEXIBLE = "flexible"
+    DISABLED = "disabled"
 
     def __str__(self):
         return self.value
@@ -35,6 +46,7 @@ class TestInput(
     aggressive_update_packages: str | list[str] | None = None
     auto_update_conda: bool | None = None
     update_modifier: UpdateModifier | None = None
+    channel_priority: ChannelPriority | None = None
     set_sys_prefix: bool | None = None
 
 

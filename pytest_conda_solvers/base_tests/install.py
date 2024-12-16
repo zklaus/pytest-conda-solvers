@@ -116,7 +116,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         val = getattr(raw_solver_input, name)
         if isinstance(val, list):
             val = join_str.join(val)
-        return var_name, val
+        return var_name, str(val) if val is not None else None
 
     solver_input = {}
     for simple_key in ("channels", "subdirs"):
@@ -142,6 +142,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
             get_env_pair(raw_solver_input, "pinned_packages", "&"),
             get_env_pair(raw_solver_input, "aggressive_update_packages", ","),
             get_env_pair(raw_solver_input, "auto_update_conda"),
+            get_env_pair(raw_solver_input, "channel_priority"),
         )
         if val is not None
     }
