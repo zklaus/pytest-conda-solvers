@@ -35,6 +35,7 @@ class TestInput(
     aggressive_update_packages: str | list[str] | None = None
     auto_update_conda: bool | None = None
     update_modifier: UpdateModifier | None = None
+    set_sys_prefix: bool | None = None
 
 
 class TestOutput(

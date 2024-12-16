@@ -1,4 +1,5 @@
 import re
+import sys
 from contextlib import contextmanager, nullcontext
 from unittest.mock import patch
 
@@ -177,6 +178,9 @@ def prepare_error_information(error):
 class TestBasic:
     @contextmanager
     def _setup_solver(self, solver_backend, channel_server, tmpdir, test_input):
+        if test_input.set_sys_prefix:
+            saved_sys_prefix = sys.prefix
+            sys.prefix = tmpdir
         solver_input, env, flags = prepare_solver_input(
             test_input,
             channel_server,
@@ -197,6 +201,8 @@ class TestBasic:
                 **solver_input,
             ) as solver:
                 yield solver, flags
+        if test_input.set_sys_prefix:
+            sys.prefix = saved_sys_prefix
 
     @pytest.mark.conda_solver_test
     def test_empty(self, env, test, channel_server: ChannelServer):
