@@ -110,6 +110,13 @@ def package_record_from_dist_str(dist_str):
 
 
 def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
+    def get_env_pair(raw_solver_input, name, join_str=None):
+        var_name = f"CONDA_{name.upper()}"
+        val = getattr(raw_solver_input, name)
+        if isinstance(val, list):
+            val = join_str.join(val)
+        return var_name, val
+
     solver_input = {}
     for simple_key in ("channels", "subdirs"):
         solver_input[simple_key] = ensure_str_tuple(
@@ -128,19 +135,11 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
             MatchSpec(s) for s in ensure_str_tuple(getattr(raw_solver_input, spec_key))
         )
     solver_input["add_pip"] = raw_solver_input.add_pip
-    pins = (
-        "&".join(pp) if (pp := raw_solver_input.pinned_packages) is not None else None
-    )
-    aggressive_update_packages = (
-        ",".join(aup)
-        if (aup := raw_solver_input.aggressive_update_packages) is not None
-        else None
-    )
     env_vars = {
         name: val
         for name, val in (
-            ("CONDA_PINNED_PACKAGES", pins),
-            ("CONDA_AGGRESSIVE_UPDATE_PACKAGES", aggressive_update_packages),
+            get_env_pair(raw_solver_input, "pinned_packages", "&"),
+            get_env_pair(raw_solver_input, "aggressive_update_packages", ","),
         )
         if val is not None
     }
