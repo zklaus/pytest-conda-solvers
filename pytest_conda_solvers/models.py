@@ -58,6 +58,15 @@ class TestOutput(
     final_state: str | list[str] | None = None
 
 
+class DiffTestOutput(
+    Struct,
+    frozen=True,
+    forbid_unknown_fields=True,
+):
+    unlink_precs: str | list[str] | None = None
+    link_precs: str | list[str] | None = None
+
+
 class UnsatisfiableTestError(
     Struct,
     tag_field="exception",
@@ -111,6 +120,21 @@ class SolveTestSpec(
     test_function: str = "test_solve"
 
 
+class SolveForDiffTestSpec(
+    Struct,
+    tag_field="kind",
+    tag="solve_for_diff",
+    frozen=True,
+    forbid_unknown_fields=True,
+):
+    name: str
+    id: str
+    provenance: str
+    input: TestInput
+    output: DiffTestOutput
+    test_function: str = "test_solve_for_diff"
+
+
 class UnsatisfiableTestSpec(
     Struct,
     tag_field="kind",
@@ -126,7 +150,7 @@ class UnsatisfiableTestSpec(
     test_function: str = "test_unsatisfiable"
 
 
-type TestSpec = SolveTestSpec | UnsatisfiableTestSpec
+type TestSpec = SolveTestSpec | SolveForDiffTestSpec | UnsatisfiableTestSpec
 
 
 class TestModule(Struct):

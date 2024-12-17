@@ -226,6 +226,32 @@ class TestBasic:
         assert convert_to_dist_str(final_state) == ref
 
     @pytest.mark.conda_solver_test
+    def test_solve_for_diff(self, env, tmpdir, solver_backend, test, channel_server):
+        with self._setup_solver(
+            solver_backend,
+            channel_server,
+            tmpdir,
+            test.input,
+        ) as (
+            solver,
+            flags,
+        ):
+            unlink_precs, link_precs = solver.solve_for_diff(**flags)
+
+        unlink_ref = add_base_url(
+            channel_server.get_base_url(), "linux-64", test.output.unlink_precs
+        )
+        link_ref = add_base_url(
+            channel_server.get_base_url(), "linux-64", test.output.link_precs
+        )
+        assert sorted(list(convert_to_dist_str(unlink_precs))) == sorted(
+            list(unlink_ref)
+        )
+        assert convert_to_dist_str(unlink_precs) == unlink_ref
+        assert sorted(list(convert_to_dist_str(link_precs))) == sorted(list(link_ref))
+        assert convert_to_dist_str(link_precs) == link_ref
+
+    @pytest.mark.conda_solver_test
     def test_unsatisfiable(self, env, tmpdir, solver_backend, test, channel_server):
         error_info = prepare_error_information(test.error)
         with (
