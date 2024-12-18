@@ -25,7 +25,6 @@ from ..models import (
     TestInput,
     UnsatisfiableTestError,
 )
-from ..server import ChannelServer
 
 EXCEPTION_MAPPING = {
     ResolvePackageNotFoundTestError: ResolvePackageNotFound,
@@ -204,12 +203,6 @@ class TestBasic:
                 yield solver, flags
         if test_input.set_sys_prefix:
             sys.prefix = saved_sys_prefix
-
-    @pytest.mark.conda_solver_test
-    def test_empty(self, env, test, channel_server: ChannelServer):
-        assert True
-        # env.repo_packages = index_packages
-        # assert env.install() == set()
 
     @pytest.mark.conda_solver_test
     def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
