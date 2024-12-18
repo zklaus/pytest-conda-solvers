@@ -51,6 +51,7 @@ class TestInput(
     channel_priority: ChannelPriority | None = None
     set_sys_prefix: bool | None = None
     override_cuda: str | None = None
+    override_glibc: str | None = None
 
 
 class TestOutput(

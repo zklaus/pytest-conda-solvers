@@ -144,6 +144,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
             get_env_pair(raw_solver_input, "auto_update_conda"),
             get_env_pair(raw_solver_input, "channel_priority"),
             get_env_pair(raw_solver_input, "override_cuda"),
+            get_env_pair(raw_solver_input, "override_glibc"),
         )
         if val is not None
     }
