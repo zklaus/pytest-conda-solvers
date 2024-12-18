@@ -1,0 +1,30 @@
+tests:
+  - name: test_cuda_1
+    id: C001
+    provenance: tests/core/test_solve.py::test_cuda_1
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cudatoolkit
+      prefix:
+      history_specs:
+      override_cuda: '9.2'
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cudatoolkit-9.0-0
+
+  - name: test_cuda_2
+    id: C002
+    provenance: tests/core/test_solve.py::test_cuda_2
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cudatoolkit
+      prefix:
+      history_specs:
+      override_cuda: '10.0'
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cudatoolkit-10.0-0
