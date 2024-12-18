@@ -1,7 +1,7 @@
 from enum import Enum
 
 from conda.core.solve import UpdateModifier
-from msgspec import Struct
+from msgspec import Struct, field
 
 
 class TestChannel(Enum):
@@ -36,7 +36,9 @@ class TestInput(
     forbid_unknown_fields=True,
 ):
     channels: TestChannel | list[TestChannel] | None = None
-    subdirs: TestSubdir | list[TestSubdir] | None = None
+    subdirs: TestSubdir | list[TestSubdir] = field(
+        default_factory=lambda: ["linux-64", "noarch"]
+    )
     specs_to_add: str | list[str] | None = None
     prefix: str | list[str] | None = None
     history_specs: str | list[str] | None = None

@@ -5,10 +5,7 @@ tests:
     kind: solve
     input:
       channels: channel-1
-      subdirs: linux-64
       specs_to_add: cudatoolkit
-      prefix:
-      history_specs:
       override_cuda: '9.2'
     output:
       final_state:
@@ -20,10 +17,7 @@ tests:
     kind: solve
     input:
       channels: channel-1
-      subdirs: linux-64
       specs_to_add: cudatoolkit
-      prefix:
-      history_specs:
       override_cuda: '10.0'
     output:
       final_state:
@@ -35,10 +29,7 @@ tests:
     kind: unsatisfiable
     input:
       channels: channel-1
-      subdirs: linux-64
       specs_to_add: cudatoolkit
-      prefix:
-      history_specs:
       override_cuda: '8.0'
     error:
       exception: UnsatisfiableError
@@ -50,10 +41,7 @@ tests:
     kind: unsatisfiable
     input:
       channels: channel-1
-      subdirs: linux-64
       specs_to_add: cudatoolkit
-      prefix:
-      history_specs:
       override_cuda: ''
     error:
       exception: UnsatisfiableError
@@ -65,10 +53,7 @@ tests:
     kind: solve
     input:
       channels: channel-1
-      subdirs: linux-64
       specs_to_add: cuda-constrain
-      prefix:
-      history_specs:
       override_cuda: ''
     output:
       final_state:
