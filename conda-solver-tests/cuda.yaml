@@ -58,3 +58,16 @@ tests:
     output:
       final_state:
         - channel-1/${{ arch }}::cuda-constrain-11.0-0
+
+  - name: test_cuda_glibc_sat
+    id: C006
+    provenance: tests/core/test_solve.py::test_cuda_glibc_sat
+    kind: solve
+    input:
+      channels: channel-1
+      specs_to_add: cuda-glibc
+      override_cuda: '10.0'
+      override_glibc: '2.23'
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cuda-glibc-10.0-0
