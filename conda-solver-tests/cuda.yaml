@@ -29,7 +29,7 @@ tests:
       final_state:
         - channel-1/${{ arch }}::cudatoolkit-10.0-0
 
-  - name: test_fail_1
+  - name: test_cuda_fail_1
     id: C003
     provenance: tests/core/test_solve.py::test_cuda_fail_1
     kind: unsatisfiable
@@ -44,7 +44,7 @@ tests:
       exception: UnsatisfiableError
       entries: []
 
-  - name: test_fail_2
+  - name: test_cuda_fail_2
     id: C004
     provenance: tests/core/test_solve.py::test_cuda_fail_2
     kind: unsatisfiable
@@ -58,3 +58,18 @@ tests:
     error:
       exception: UnsatisfiableError
       entries: []
+
+  - name: test_cuda_constrain_absent
+    id: C005
+    provenance: tests/core/test_solve.py::test_cuda_constrain_absent
+    kind: solve
+    input:
+      channels: channel-1
+      subdirs: linux-64
+      specs_to_add: cuda-constrain
+      prefix:
+      history_specs:
+      override_cuda: ''
+    output:
+      final_state:
+        - channel-1/${{ arch }}::cuda-constrain-11.0-0
