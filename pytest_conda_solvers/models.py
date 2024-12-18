@@ -48,6 +48,7 @@ class TestInput(
     update_modifier: UpdateModifier | None = None
     channel_priority: ChannelPriority | None = None
     set_sys_prefix: bool | None = None
+    override_cuda: str | None = None
 
 
 class TestOutput(

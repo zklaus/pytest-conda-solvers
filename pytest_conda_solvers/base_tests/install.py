@@ -17,6 +17,7 @@ from conda.exceptions import (
 from conda.history import History
 from conda.models.channel import Channel
 from conda.models.records import PackageRecord, PrefixRecord
+from conda.plugins.virtual_packages import cuda
 from conda.resolve import MatchSpec
 
 from ..models import (
@@ -142,6 +143,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
             get_env_pair(raw_solver_input, "aggressive_update_packages", ","),
             get_env_pair(raw_solver_input, "auto_update_conda"),
             get_env_pair(raw_solver_input, "channel_priority"),
+            get_env_pair(raw_solver_input, "override_cuda"),
         )
         if val is not None
     }
@@ -194,6 +196,8 @@ class TestBasic:
             if test_input.set_sys_prefix:
                 saved_sys_prefix = sys.prefix
                 sys.prefix = tmpdir
+            if "CONDA_OVERRIDE_CUDA" in env:
+                cuda.cached_cuda_version.cache_clear()
             with get_solver(
                 solver_backend,
                 tmpdir,
