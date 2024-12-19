@@ -1,10 +1,14 @@
-import json
 import threading
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from enum import Enum
-from functools import lru_cache
+from typing import Any
 
 import uvicorn
-from fastapi import FastAPI, HTTPException, Response, status
+from fastapi import FastAPI, HTTPException, status
+from fastapi_cache import Coder, FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi_cache.decorator import cache
 from pytest import fixture
 
 from .data import get_channel_repodata
@@ -27,25 +31,34 @@ class ChannelServer:
         return f"{self.get_base_url()}/{channel}"
 
 
-@lru_cache(maxsize=None)
-def _get_encoded_channel_repodata(channel_name, subdir, filename):
-    return json.dumps(get_channel_repodata(channel_name, subdir, filename))
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
+    yield
+
+
+class NullCoder(Coder):
+    @classmethod
+    def encode(cls, value: Any) -> bytes:
+        return value
+
+    @classmethod
+    def decode(cls, value: bytes) -> Any:
+        return value
 
 
 @fixture(scope="session")
 def channel_server(host="localhost", port=8080):
-    app = FastAPI()
+    app = FastAPI(lifespan=lifespan)
 
     @app.get("/{channel_name}/{subdir}/{filename}")
+    @cache()
     async def repodata(
         channel_name: str,
         subdir: str,
         filename: RepodataFilename,
     ):
-        return Response(
-            _get_encoded_channel_repodata(channel_name, subdir, filename.value),
-            media_type="application/json",
-        )
+        return get_channel_repodata(channel_name, subdir, filename.value)
 
     @app.get("/{full_path:path}")
     async def catch_all():
