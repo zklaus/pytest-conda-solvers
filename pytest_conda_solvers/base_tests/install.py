@@ -211,7 +211,7 @@ class TestBasic:
                 channel_server,
                 **solver_input,
             ) as solver:
-                yield solver, flags
+                yield solver, solver_input, env, flags
             if test_input.set_sys_prefix:
                 sys.prefix = saved_sys_prefix
 
@@ -219,6 +219,8 @@ class TestBasic:
     def test_solve(self, env, tmpdir, solver_backend, test, channel_server):
         with self._setup_solver(solver_backend, channel_server, tmpdir, test.input) as (
             solver,
+            solver_input,
+            env,
             flags,
         ):
             final_state = solver.solve_final_state(**flags)
@@ -238,6 +240,8 @@ class TestBasic:
             test.input,
         ) as (
             solver,
+            solver_input,
+            env,
             flags,
         ):
             unlink_precs, link_precs = solver.solve_for_diff(**flags)
@@ -256,11 +260,37 @@ class TestBasic:
         assert convert_to_dist_str(link_precs) == link_ref
 
     @pytest.mark.conda_solver_test
+    def test_determine_constricting_specs(
+        self, env, tmpdir, solver_backend, test, channel_server
+    ):
+        solution_precs = [
+            PrefixRecord.from_objects(r) for r in test.input.solution_records
+        ]
+        with self._setup_solver(
+            solver_backend,
+            channel_server,
+            tmpdir,
+            test.input,
+        ) as (
+            solver,
+            solver_input,
+            env,
+            flags,
+        ):
+            constrictions = solver.determine_constricting_specs(
+                solver_input["specs_to_add"][0], solution_precs
+            )
+
+        assert constrictions == test.output.constrictions_as_list()
+
+    @pytest.mark.conda_solver_test
     def test_unsatisfiable(self, env, tmpdir, solver_backend, test, channel_server):
         error_info = prepare_error_information(test.error)
         with (
             self._setup_solver(solver_backend, channel_server, tmpdir, test.input) as (
                 solver,
+                solver_input,
+                env,
                 flags,
             ),
             pytest.raises(error_info["exception"]) as exc_info,

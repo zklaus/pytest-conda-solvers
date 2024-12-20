@@ -1,6 +1,8 @@
 from enum import Enum
 
 from conda.core.solve import UpdateModifier
+from conda.models.enums import PackageType
+from conda.models.match_spec import MatchSpec
 from msgspec import Struct, field
 
 
@@ -8,6 +10,8 @@ class TestChannel(Enum):
     CHANNEL_1 = "channel-1"
     CHANNEL_2 = "channel-2"
     CHANNEL_4 = "channel-4"
+    CONDA_FORMAT_REPO = "conda_format_repo"
+    TEST = "test"
 
     def __str__(self):
         return self.value
@@ -16,6 +20,7 @@ class TestChannel(Enum):
 class TestSubdir(Enum):
     NOARCH = "noarch"
     LINUX_64 = "linux-64"
+    CONDA_TEST = "conda-test"
 
     def __str__(self):
         return self.value
@@ -30,6 +35,28 @@ class ChannelPriority(Enum):
         return self.value
 
 
+class PrefixRecord(
+    Struct,
+    tag_field="record_type",
+    tag="prefix",
+    frozen=True,
+    forbid_unknown_fields=True,
+    kw_only=True,
+):
+    package_type: PackageType | None = None
+    name: str
+    version: str
+    channel: str
+    subdir: str
+    fn: str
+    build: str = "0"
+    build_number: int = 0
+    paths_data: list[str] | None = None
+    files: list[str] | None = None
+    depends: list[str] = []
+    constrains: list[str] = []
+
+
 class TestInput(
     Struct,
     frozen=True,
@@ -42,6 +69,7 @@ class TestInput(
     specs_to_add: str | list[str] | None = None
     prefix: str | list[str] | None = None
     history_specs: str | list[str] | None = None
+    solution_records: PrefixRecord | list[PrefixRecord] | None = None
     add_pip: bool = False
     ignore_pinned: bool | None = None
     pinned_packages: str | list[str] | None = None
@@ -139,6 +167,44 @@ class SolveForDiffTestSpec(
     test_function: str = "test_solve_for_diff"
 
 
+class Constriction(
+    Struct,
+    frozen=True,
+    forbid_unknown_fields=True,
+):
+    package: str
+    constricting_match_spec: str
+
+
+class DeterminingConstrictingSpecsTestOutput(
+    Struct,
+    frozen=True,
+    forbid_unknown_fields=True,
+):
+    constrictions: list[Constriction] = []
+
+    def constrictions_as_list(self):
+        return [
+            (c.package, MatchSpec(c.constricting_match_spec))
+            for c in self.constrictions
+        ]
+
+
+class DetermineConstrictingSpecsTestSpec(
+    Struct,
+    tag_field="kind",
+    tag="determine_constricting_specs",
+    frozen=True,
+    forbid_unknown_fields=True,
+):
+    name: str
+    id: str
+    provenance: str
+    input: TestInput
+    output: DeterminingConstrictingSpecsTestOutput
+    test_function: str = "test_determine_constricting_specs"
+
+
 class UnsatisfiableTestSpec(
     Struct,
     tag_field="kind",
@@ -154,7 +220,12 @@ class UnsatisfiableTestSpec(
     test_function: str = "test_unsatisfiable"
 
 
-type TestSpec = SolveTestSpec | SolveForDiffTestSpec | UnsatisfiableTestSpec
+type TestSpec = (
+    SolveTestSpec
+    | SolveForDiffTestSpec
+    | DetermineConstrictingSpecsTestSpec
+    | UnsatisfiableTestSpec
+)
 
 
 class TestModule(Struct):
