@@ -123,13 +123,8 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         solver_input[simple_key] = ensure_str_tuple(
             getattr(raw_solver_input, simple_key)
         )
-    solver_input["prefix_records"] = tuple(
-        package_record_from_dist_str(dist_str)
-        for dist_str in add_base_url(
-            channel_server.get_base_url(),
-            arch,
-            ensure_str_tuple(raw_solver_input.prefix),
-        )
+    solver_input["prefix_records"] = diststrs_to_records(
+        raw_solver_input.prefix, channel_server, arch
     )
     for spec_key in ("specs_to_add", "history_specs"):
         solver_input[spec_key] = tuple(
@@ -160,6 +155,17 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         if (v := getattr(raw_solver_input, flag)) is not None
     }
     return solver_input, env_vars, flags
+
+
+def diststrs_to_records(diststrs, channel_server, arch):
+    return tuple(
+        package_record_from_dist_str(dist_str)
+        for dist_str in add_base_url(
+            channel_server.get_base_url(),
+            arch,
+            ensure_str_tuple(diststrs),
+        )
+    )
 
 
 def prepare_error_information(error):
