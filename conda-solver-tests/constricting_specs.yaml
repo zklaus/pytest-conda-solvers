@@ -134,3 +134,41 @@ tests:
           constricting_match_spec: mypkg<=0.1.1
         - package: notmypkg
           constricting_match_spec: mypkg==0.1.1
+
+  - name: test_determine_constricting_specs_no_conflicts_upperbound_compound_depends
+    id: S004
+    provenance: tests/core/test_solve.py::test_determine_constricting_specs_no_conflicts_upperbound_compound_depends
+    kind: determine_constricting_specs
+    input:
+      channels: channel-1
+      specs_to_add: mypkg
+      solution_records:
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkg
+          version: 0.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkg-0.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends: []
+          constrains: []
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkgnot
+          version: 1.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkgnot-1.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends:
+            - mypkg >=0.1.1,<0.2.1
+          constrains: []
+    output:
+      constrictions:

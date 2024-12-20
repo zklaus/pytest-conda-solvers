@@ -181,13 +181,17 @@ class DeterminingConstrictingSpecsTestOutput(
     frozen=True,
     forbid_unknown_fields=True,
 ):
-    constrictions: list[Constriction] = []
+    constrictions: list[Constriction] | None = None
 
     def constrictions_as_list(self):
-        return [
-            (c.package, MatchSpec(c.constricting_match_spec))
-            for c in self.constrictions
-        ]
+        return (
+            None
+            if self.constrictions is None
+            else [
+                (c.package, MatchSpec(c.constricting_match_spec))
+                for c in self.constrictions
+            ]
+        )
 
 
 class DetermineConstrictingSpecsTestSpec(
