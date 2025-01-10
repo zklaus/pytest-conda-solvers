@@ -1,0 +1,25 @@
+[dependencies]
+conda = "*"
+fastapi = "*"
+fastapi-cache2 = "*"
+importlib_resources = ">=5.10"
+msgspec = "*"
+pytest = ">=6.2.0"
+python = ">=3.12"
+
+[project]
+authors = ["conda contributors"]
+channels = ["conda-forge"]
+description = "A pytest plugin to run conda solver tests"
+license = "BSD-3-Clause"
+license-file = "LICENSE"
+name = "pytest-conda-solvers"
+platforms = ["linux-64", "osx-64", "win-64"]
+readme = "README.md"
+
+[pypi-dependencies]
+pytest-conda-solvers = {path = ".", editable = true}
+
+[tasks]
+test-classic-solver = "pytest --conda-solver=classic conda-solver-tests"
+test-libmamba-solver = "pytest --conda-solver=libmamba conda-solver-tests"
