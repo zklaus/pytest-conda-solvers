@@ -29,6 +29,7 @@ dependencies = [
   "importlib_resources>=5.10; python_version<'3.12'",
   "msgspec",
   "pytest>=6.2.0",
+  "typer",
 ]
 description = "A pytest plugin to run conda solver tests"
 dynamic = ["version"]
@@ -42,6 +43,9 @@ requires-python = ">=3.12"
 
 [project.entry-points.pytest11]
 conda-solvers = "pytest_conda_solvers.plugin"
+
+[project.scripts]
+pcs-tool = "pytest_conda_solvers.cli:app"
 
 [project.urls]
 Repository = "https://github.com/zklaus/pytest-conda-solvers"
