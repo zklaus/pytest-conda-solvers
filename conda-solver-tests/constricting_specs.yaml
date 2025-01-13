@@ -1,0 +1,274 @@
+tests:
+  - name: test_determine_constricting_specs_conflicts
+    id: S001
+    provenance: tests/core/test_solve.py::test_determine_constricting_specs_conflicts
+    kind: determine_constricting_specs
+    input:
+      channels: channel-1
+      specs_to_add: mypkg
+      solution_records:
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkg
+          version: 0.1.0
+          channel: test
+          subdir: conda-test
+          fn: mypkg-0.1.0
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends: []
+          constrains: []
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkgnot
+          version: 1.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkgnot-1.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends:
+            - mypkg 0.1.0
+          constrains: []
+    output:
+      constrictions:
+        - package: mypkgnot
+          constricting_match_spec: mypkg==0.1.0
+
+  - name: test_determine_constricting_specs_conflicts_upperbound
+    id: S002
+    provenance: tests/core/test_solve.py::test_determine_constricting_specs_conflicts_upperbound
+    kind: determine_constricting_specs
+    input:
+      channels: channel-1
+      specs_to_add: mypkg
+      solution_records:
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkg
+          version: 0.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkg-0.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends: []
+          constrains: []
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkgnot
+          version: 1.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkgnot-1.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends:
+            - mypkg <=0.1.1
+          constrains: []
+    output:
+      constrictions:
+        - package: mypkgnot
+          constricting_match_spec: mypkg<=0.1.1
+
+  - name: test_determine_constricting_specs_multi_conflicts
+    id: S003
+    provenance: tests/core/test_solve.py::test_determine_constricting_specs_multi_conflicts
+    kind: determine_constricting_specs
+    input:
+      channels: channel-1
+      specs_to_add: mypkg
+      solution_records:
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkg
+          version: 0.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkg-0.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends: []
+          constrains: []
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkgnot
+          version: 1.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkgnot-1.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends:
+            - mypkg <=0.1.1
+          constrains: []
+        - record_type: prefix
+          package_type: noarch_generic
+          name: notmypkg
+          version: 1.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkgnot-1.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends:
+            - mypkg 0.1.1
+          constrains: []
+    output:
+      constrictions:
+        - package: mypkgnot
+          constricting_match_spec: mypkg<=0.1.1
+        - package: notmypkg
+          constricting_match_spec: mypkg==0.1.1
+
+  - name: test_determine_constricting_specs_no_conflicts_upperbound_compound_depends
+    id: S004
+    provenance: tests/core/test_solve.py::test_determine_constricting_specs_no_conflicts_upperbound_compound_depends
+    kind: determine_constricting_specs
+    input:
+      channels: channel-1
+      specs_to_add: mypkg
+      solution_records:
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkg
+          version: 0.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkg-0.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends: []
+          constrains: []
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkgnot
+          version: 1.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkgnot-1.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends:
+            - mypkg >=0.1.1,<0.2.1
+          constrains: []
+    output:
+      constrictions:
+
+  - name: test_determine_constricting_specs_no_conflicts_version_star
+    id: S005
+    provenance: tests/core/test_solve.py::test_determine_constricting_specs_no_conflicts_version_star
+    kind: determine_constricting_specs
+    input:
+      channels: channel-1
+      specs_to_add: mypkg
+      solution_records:
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkg
+          version: 0.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkg-0.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends: []
+          constrains: []
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkgnot
+          version: 1.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkgnot-1.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends:
+            - mypkg 0.1.*
+          constrains: []
+    output:
+      constrictions:
+
+  - name: test_determine_constricting_specs_no_conflicts_free
+    id: S006
+    provenance: tests/core/test_solve.py::test_determine_constricting_specs_no_conflicts_free
+    kind: determine_constricting_specs
+    input:
+      channels: channel-1
+      specs_to_add: mypkg
+      solution_records:
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkg
+          version: 0.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkg-0.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends: []
+          constrains: []
+    output:
+      constrictions:
+
+  - name: test_determine_constricting_specs_no_conflicts_no_upperbound
+    id: S007
+    provenance: tests/core/test_solve.py::test_determine_constricting_specs_no_conflicts_no_upperbound
+    kind: determine_constricting_specs
+    input:
+      channels: channel-1
+      specs_to_add: mypkg
+      solution_records:
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkg
+          version: 0.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkg-0.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends: []
+          constrains: []
+        - record_type: prefix
+          package_type: noarch_generic
+          name: mypkgnot
+          version: 1.1.1
+          channel: test
+          subdir: conda-test
+          fn: mypkgnot-1.1.1
+          build: pypi_0
+          build_number: 1
+          paths_data:
+          files:
+          depends:
+            - mypkg >=0.0.5
+          constrains: []
+    output:
+      constrictions:
