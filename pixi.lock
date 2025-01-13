@@ -3687,16 +3687,17 @@ packages:
   timestamp: 1733217599806
 - kind: pypi
   name: pytest-conda-solvers
-  version: 0.1.dev90+dirty
+  version: 0.1.dev99
   path: .
-  sha256: 185e005421b7210374a8aca3ef5656801fa80787483ad64c52b0b6e7c1b0aef9
+  sha256: a423bfbd56b48dbbce50b02eecc2a918eea8098dc3a4c36cc90742603bec9da5
   requires_dist:
   - conda
+  - fastapi-cache2
   - fastapi[standard]
   - importlib-resources>=5.10 ; python_full_version < '3.12'
   - msgspec
   - pytest>=6.2.0
-  requires_python: '>=3.8'
+  requires_python: '>=3.12'
   editable: true
 - kind: conda
   name: python
