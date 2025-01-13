@@ -22,5 +22,6 @@ readme = "README.md"
 pytest-conda-solvers = {path = ".", editable = true}
 
 [tasks]
+generate-schema = "python -m pytest_conda_solvers.cli"
 test-classic-solver = "pytest --conda-solver=classic conda-solver-tests"
 test-libmamba-solver = "pytest --conda-solver=libmamba conda-solver-tests"
