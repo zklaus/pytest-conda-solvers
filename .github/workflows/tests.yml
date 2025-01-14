@@ -26,6 +26,5 @@ jobs:
         with:
           pixi-version: v0.40.0
           cache: true
-          auth-host: prefix.dev
 
       - run: pixi run test-classic-solver
