@@ -144,7 +144,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         if val is not None
     }
     bool_flags = ("ignore_pinned",)
-    enum_flags = ("update_modifier",)
+    enum_flags = ("update_modifier", "deps_modifier")
     flags = {
         flag: v
         for flag in bool_flags
