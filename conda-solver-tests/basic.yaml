@@ -913,3 +913,101 @@ tests:
         - channel-4/${{ arch }}::itsdangerous-0.24-py37_1
       link_precs:
         - channel-2/noarch::itsdangerous-0.24-py_0
+
+  - name: test_update_all_1_1
+    id: B025
+    provenance: tests/core/test_solve.py::test_update_all_1::1
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - numpy=1.5
+        - python=2.6
+        - system[version=*,build=*0]
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::numpy-1.5.1-py26_4
+
+  - name: test_update_all_1_2
+    id: B026
+    provenance: tests/core/test_solve.py::test_update_all_1::2
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - numba=0.6
+        - numpy
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::numpy-1.5.1-py26_4
+      history_specs:
+        - numpy=1.5
+        - python=2.6
+        - system[version=*,build=*0]
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::llvmpy-0.10.2-py26_0
+        - channel-1/${{ arch }}::nose-1.3.0-py26_0
+        - channel-1/${{ arch }}::numpy-1.7.1-py26_0
+        - channel-1/${{ arch }}::numba-0.6.0-np17py26_0
+
+  - name: test_update_all_1_3
+    id: B027
+    provenance: tests/core/test_solve.py::test_update_all_1::3
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - numba=0.6
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::numpy-1.5.1-py26_4
+      history_specs:
+        - numpy=1.5
+        - python=2.6
+        - system[version=*,build=*0]
+      update_modifier: update_all
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::llvmpy-0.10.2-py26_0
+        - channel-1/${{ arch }}::nose-1.3.0-py26_0
+        - channel-1/${{ arch }}::numpy-1.7.1-py26_0
+        - channel-1/${{ arch }}::numba-0.6.0-np17py26_0
