@@ -9,10 +9,6 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  # https://conda.github.io/conda-libmamba-solver/user-guide/configuration/#advanced-options
-  CONDA_LIBMAMBA_SOLVER_NO_CHANNELS_FROM_INSTALLED: true
-
 jobs:
   test:
     runs-on: ubuntu-latest
