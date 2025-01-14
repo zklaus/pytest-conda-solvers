@@ -29,6 +29,7 @@ dependencies = [
   "importlib_resources>=5.10; python_version<'3.12'",
   "msgspec",
   "pytest>=6.2.0",
+  "typer",
 ]
 description = "A pytest plugin to run conda solver tests"
 dynamic = ["version"]

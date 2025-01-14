@@ -6,6 +6,7 @@ importlib_resources = ">=5.10"
 msgspec = "*"
 pytest = ">=6.2.0"
 python = ">=3.12"
+typer = ">=0.15.1,<0.16"
 
 [project]
 authors = ["conda contributors"]
@@ -21,5 +22,6 @@ readme = "README.md"
 pytest-conda-solvers = {path = ".", editable = true}
 
 [tasks]
+generate-schema = "python -m pytest_conda_solvers.cli"
 test-classic-solver = "pytest --conda-solver=classic conda-solver-tests"
 test-libmamba-solver = "pytest --conda-solver=libmamba conda-solver-tests"
