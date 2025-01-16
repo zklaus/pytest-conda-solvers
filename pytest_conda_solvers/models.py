@@ -1,6 +1,6 @@
 from enum import Enum
 
-from conda.core.solve import UpdateModifier
+from conda.core.solve import UpdateModifier, DepsModifier
 from conda.models.enums import PackageType
 from conda.models.match_spec import MatchSpec
 from msgspec import Struct, field
@@ -76,6 +76,7 @@ class TestInput(
     aggressive_update_packages: str | list[str] | None = None
     auto_update_conda: bool | None = None
     update_modifier: UpdateModifier | None = None
+    deps_modifier: DepsModifier | None = None
     channel_priority: ChannelPriority | None = None
     set_sys_prefix: bool | None = None
     override_cuda: str | None = None

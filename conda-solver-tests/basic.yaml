@@ -913,3 +913,382 @@ tests:
         - channel-4/${{ arch }}::itsdangerous-0.24-py37_1
       link_precs:
         - channel-2/noarch::itsdangerous-0.24-py_0
+
+  - name: test_update_all_1_1
+    id: B025
+    provenance: tests/core/test_solve.py::test_update_all_1::1
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - numpy=1.5
+        - python=2.6
+        - system[version=*,build=*0]
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::numpy-1.5.1-py26_4
+
+  - name: test_update_all_1_2
+    id: B026
+    provenance: tests/core/test_solve.py::test_update_all_1::2
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - numba=0.6
+        - numpy
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::numpy-1.5.1-py26_4
+      history_specs:
+        - numpy=1.5
+        - python=2.6
+        - system[version=*,build=*0]
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::llvmpy-0.10.2-py26_0
+        - channel-1/${{ arch }}::nose-1.3.0-py26_0
+        - channel-1/${{ arch }}::numpy-1.7.1-py26_0
+        - channel-1/${{ arch }}::numba-0.6.0-np17py26_0
+
+  - name: test_update_all_1_3
+    id: B027
+    provenance: tests/core/test_solve.py::test_update_all_1::3
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - numba=0.6
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::numpy-1.5.1-py26_4
+      history_specs:
+        - numpy=1.5
+        - python=2.6
+        - system[version=*,build=*0]
+      update_modifier: update_all
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::llvmpy-0.10.2-py26_0
+        - channel-1/${{ arch }}::nose-1.3.0-py26_0
+        - channel-1/${{ arch }}::numpy-1.7.1-py26_0
+        - channel-1/${{ arch }}::numba-0.6.0-np17py26_0
+
+  - name: test_update_deps_1_1
+    id: B028
+    provenance: tests/core/test_solve.py::test_update_deps_1::1
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - python=2
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+
+  - name: test_update_deps_1_2
+    id: B029
+    provenance: tests/core/test_solve.py::test_update_deps_1::2
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - numpy=1.7.0
+        - python=2.7.3
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+      history_specs:
+        - python=2
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::nose-1.3.0-py27_0
+        - channel-1/${{ arch }}::numpy-1.7.0-py27_0
+
+  - name: test_update_deps_1_3
+    id: B030
+    provenance: tests/core/test_solve.py::test_update_deps_1::3
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - iopro
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::nose-1.3.0-py27_0
+        - channel-1/${{ arch }}::numpy-1.7.0-py27_0
+      history_specs:
+        - numpy=1.7.0
+        - python=2.7.3
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::unixodbc-2.3.1-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::nose-1.3.0-py27_0
+        - channel-1/${{ arch }}::numpy-1.7.0-py27_0
+        - channel-1/${{ arch }}::iopro-1.5.0-np17py27_p0
+
+  - name: test_update_deps_1_4
+    id: B031
+    provenance: tests/core/test_solve.py::test_update_deps_1::4
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - iopro
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::nose-1.3.0-py27_0
+        - channel-1/${{ arch }}::numpy-1.7.0-py27_0
+      history_specs:
+        - numpy=1.7.0
+        - python=2.7.3
+      update_modifier: update_deps
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::unixodbc-2.3.1-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::nose-1.3.0-py27_0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::iopro-1.5.0-np17py27_p0
+
+  - name: test_update_deps_1_5
+    id: B032
+    provenance: tests/core/test_solve.py::test_update_deps_1::5
+    kind: solve
+    input:
+      channels:
+        - channel-1
+      specs_to_add:
+        - iopro
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::nose-1.3.0-py27_0
+        - channel-1/${{ arch }}::numpy-1.7.0-py27_0
+      history_specs:
+        - numpy=1.7.0
+        - python=2.7.3
+      update_modifier: update_deps
+      deps_modifier: only_deps
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::unixodbc-2.3.1-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::nose-1.3.0-py27_0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+
+  - name: test_update_deps_2_1
+    id: B033
+    provenance: tests/core/test_solve.py::test_update_deps_2::1
+    kind: solve
+    input:
+      channels:
+        - channel-4
+        - channel-2
+      specs_to_add:
+        - flask==0.12
+        - jinja2==2.8
+    output:
+      final_state:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-3.6.6-hc3d631a_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py36_0
+        - channel-4/${{ arch }}::click-6.7-py36_0
+        - channel-4/${{ arch }}::itsdangerous-0.24-py36_1
+        - channel-4/${{ arch }}::markupsafe-1.0-py36h14c3975_1
+        - channel-4/${{ arch }}::werkzeug-0.14.1-py36_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py36_0
+        - channel-2/${{ arch }}::jinja2-2.8-py36_1
+        - channel-2/${{ arch }}::flask-0.12-py36_0
+
+  - name: test_update_deps_2_2
+    id: B034
+    provenance: tests/core/test_solve.py::test_update_deps_2::2
+    kind: solve_for_diff
+    input:
+      channels:
+        - channel-4
+        - channel-2
+      specs_to_add:
+        - flask
+      history_specs:
+        - flask==0.12
+        - jinja2==2.8
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-3.6.6-hc3d631a_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py36_0
+        - channel-4/${{ arch }}::click-6.7-py36_0
+        - channel-4/${{ arch }}::itsdangerous-0.24-py36_1
+        - channel-4/${{ arch }}::markupsafe-1.0-py36h14c3975_1
+        - channel-4/${{ arch }}::werkzeug-0.14.1-py36_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py36_0
+        - channel-2/${{ arch }}::jinja2-2.8-py36_1
+        - channel-2/${{ arch }}::flask-0.12-py36_0
+    output:
+      unlink_precs:
+        - channel-2/${{ arch }}::flask-0.12-py36_0
+      link_precs:
+        - channel-4/${{ arch }}::flask-0.12.2-py36hb24657c_0
+
+  - name: test_update_deps_2_3
+    id: B035
+    provenance: tests/core/test_solve.py::test_update_deps_2::3
+    kind: solve_for_diff
+    input:
+      channels:
+        - channel-4
+        - channel-2
+      specs_to_add:
+        - flask
+      history_specs:
+        - flask==0.12
+        - jinja2==2.8
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-3.6.6-hc3d631a_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py36_0
+        - channel-4/${{ arch }}::click-6.7-py36_0
+        - channel-4/${{ arch }}::itsdangerous-0.24-py36_1
+        - channel-4/${{ arch }}::markupsafe-1.0-py36h14c3975_1
+        - channel-4/${{ arch }}::werkzeug-0.14.1-py36_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py36_0
+        - channel-2/${{ arch }}::jinja2-2.8-py36_1
+        - channel-2/${{ arch }}::flask-0.12-py36_0
+      update_modifier: update_deps
+    output:
+      unlink_precs:
+        - channel-2/${{ arch }}::flask-0.12-py36_0
+        - channel-2/${{ arch }}::jinja2-2.8-py36_1
+      link_precs:
+        - channel-4/${{ arch }}::jinja2-2.10-py36_0
+        - channel-4/${{ arch }}::flask-1.0.2-py36_1
