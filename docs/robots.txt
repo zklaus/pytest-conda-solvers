@@ -1,0 +1,3 @@
+User-agent: *
+
+Sitemap: https://pytest-conda-solvers.github.io/pytest-conda-solvers/sitemap.xml
