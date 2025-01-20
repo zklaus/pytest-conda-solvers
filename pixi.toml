@@ -33,14 +33,16 @@ myst-parser = "*"
 sphinx = "*"
 sphinx-copybutton = "*"
 sphinx-design = "*"
+sphinx-jsonschema = "*"
 sphinx-reredirects = "*"
 sphinx-sitemap = "*"
+sphinxcontrib-openapi = "*"
 sphinxcontrib-programoutput = "*"
 
 [feature.docs.tasks]
-docs = { cmd = "python -m sphinx.cmd.build -M dirhtml . _build", cwd = "docs" }
-serve = { cmd = "python -m http.server", cwd = "docs/_build/dirhtml" }
-clean = { cmd = "rm -rf _build", cwd = "docs" }
+docs = {cmd = "python -m sphinx.cmd.build -M dirhtml . _build", cwd = "docs"}
+serve = {cmd = "python -m http.server", cwd = "docs/_build/dirhtml"}
+clean = {cmd = "rm -rf _build", cwd = "docs"}
 
 [environments]
 docs = ["docs"]
