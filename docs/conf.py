@@ -25,7 +25,9 @@ extensions = [
     "sphinx_sitemap",
     "sphinx_design",
     "sphinx_copybutton",
+    "sphinx-jsonschema",
     "sphinx_reredirects",
+    "sphinxcontrib.openapi",
     "sphinxcontrib.programoutput",
 ]
 
